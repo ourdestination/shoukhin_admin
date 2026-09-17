@@ -1332,18 +1332,23 @@
     let comboOffers = [];
     let offerCustomerMessage = '';
 
-    window.addEventListener('beforeunload', () => {
-      sessionStorage.removeItem('isAdminLoggedIn');
-    });
-
     document.addEventListener("DOMContentLoaded", () => {
       initApp();
       initLiveVisitorPresence();
       populateDistricts();
       updateFingerprintSettingsUI();
 
-      // If this browser tab already passed the login gate in this session, skip straight to the dashboard.
-      if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+      // Login now persists (localStorage) until the admin explicitly logs out —
+      // closing the tab/browser or refreshing no longer logs them out.
+      // Exception: if fingerprint lock is enabled on this device, the fingerprint
+      // gate must still be passed on every fresh page load, even if a previous
+      // login is remembered.
+      const isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+      const cachedFingerprintEnabled = localStorage.getItem('adminFingerprintEnabledCache') === 'true';
+      const credId = localStorage.getItem('adminFingerprintCredId');
+      const fingerprintLockActive = cachedFingerprintEnabled && credId && window.PublicKeyCredential;
+
+      if (isLoggedIn && !fingerprintLockActive) {
         showAdminDashboard();
       } else {
         initFingerprintGate();
@@ -1736,6 +1741,7 @@
             }
             if(settings.adminPass) adminPassword = settings.adminPass;
             fingerprintEnabled = !!settings.fingerprintEnabled;
+            localStorage.setItem('adminFingerprintEnabledCache', fingerprintEnabled ? 'true' : 'false');
             initFingerprintGate();
             updateFingerprintSettingsUI();
             if(settings.paymentNumbers) {
@@ -2813,7 +2819,7 @@
       const p = input.value;
       const errBox = document.getElementById('gateError');
       if (p === adminPassword) {
-        sessionStorage.setItem('isAdminLoggedIn', 'true');
+        localStorage.setItem('isAdminLoggedIn', 'true');
         errBox.innerText = '';
         input.value = '';
         showAdminDashboard();
@@ -2844,7 +2850,6 @@
     }
 
     function initFingerprintGate() {
-      if (sessionStorage.getItem('isAdminLoggedIn') === 'true') return;
       const credId = localStorage.getItem('adminFingerprintCredId');
       const fpBox = document.getElementById('fingerprintLoginBox');
       const pwBox = document.getElementById('passwordLoginBox');
@@ -2887,7 +2892,7 @@
           }
         });
         if (assertion) {
-          sessionStorage.setItem('isAdminLoggedIn', 'true');
+          localStorage.setItem('isAdminLoggedIn', 'true');
           showAdminDashboard();
         }
       } catch (err) {
@@ -2928,6 +2933,7 @@
         const credId = bufferToBase64Url(credential.rawId);
         localStorage.setItem('adminFingerprintCredId', credId);
         fingerprintEnabled = true;
+        localStorage.setItem('adminFingerprintEnabledCache', 'true');
         if (window.db) window.update(window.ref(window.db, 'settings'), { fingerprintEnabled: true });
         alert('এই ডিভাইসে ফিঙ্গারপ্রিন্ট লক সফলভাবে চালু হয়েছে!');
         updateFingerprintSettingsUI();
@@ -2940,6 +2946,7 @@
     function disableFingerprint() {
       localStorage.removeItem('adminFingerprintCredId');
       fingerprintEnabled = false;
+      localStorage.setItem('adminFingerprintEnabledCache', 'false');
       if (window.db) window.update(window.ref(window.db, 'settings'), { fingerprintEnabled: false });
       alert('ফিঙ্গারপ্রিন্ট লক বন্ধ করা হয়েছে। এখন পাসওয়ার্ড দিয়ে লগইন করতে হবে।');
       updateFingerprintSettingsUI();
@@ -2968,14 +2975,15 @@
     }
 
     function logoutAdmin() {
-      sessionStorage.removeItem('isAdminLoggedIn');
+      localStorage.removeItem('isAdminLoggedIn');
       document.getElementById('adminPanel').style.display = 'none';
       document.getElementById('adminLoginGate').style.display = 'flex';
+      initFingerprintGate();
     }
 
     // Kept for backward compatibility since some legacy code paths reference it.
     function openAdminCheck() {
-      if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+      if (localStorage.getItem('isAdminLoggedIn') === 'true') {
         showAdminDashboard();
       } else {
         document.getElementById('adminLoginGate').style.display = 'flex';
