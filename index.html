@@ -84,6 +84,21 @@
     .admin-gate-box button:hover { opacity: 0.9; transform: translateY(-1px); }
     #gateError { color: #dc3545; font-size: 0.82rem; margin-top: 10px; min-height: 16px; font-weight: 600; }
 
+    .fingerprint-btn {
+      width: 90px; height: 90px; border-radius: 50%; margin: 10px auto 18px auto; border: none; cursor: pointer;
+      background: linear-gradient(45deg, var(--primary), var(--secondary)); color: #fff; font-size: 2.2rem;
+      display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(233,30,99,0.35);
+      animation: fpPulse 1.8s infinite;
+    }
+    .fingerprint-btn:active { transform: scale(0.95); }
+    @keyframes fpPulse {
+      0% { box-shadow: 0 0 0 0 rgba(233,30,99,0.35); }
+      70% { box-shadow: 0 0 0 16px rgba(233,30,99,0); }
+      100% { box-shadow: 0 0 0 0 rgba(233,30,99,0); }
+    }
+    .gate-use-password { color: #888; font-size: 0.82rem; margin-top: 4px; cursor: pointer; text-decoration: underline; }
+    .gate-use-password:hover { color: var(--primary); }
+
     .admin-order-toast {
       position: fixed; top: 20px; right: 20px; z-index: 100000; background: #fff; border-left: 6px solid var(--primary);
       box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 10px; padding: 14px 18px; min-width: 260px; max-width: 320px;
@@ -437,8 +452,20 @@
       <div class="gate-icon"><i class="fa-solid fa-user-shield"></i></div>
       <h2>Admin Portal</h2>
       <p class="gate-sub">Shoukhin Online Shop &mdash; Authorized access only</p>
-      <input type="password" id="gatePassInput" placeholder="Enter Admin Password" onkeydown="if(event.key==='Enter') gateLogin();">
-      <button onclick="gateLogin()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+
+      <div id="fingerprintLoginBox" style="display:none;">
+        <button type="button" class="fingerprint-btn" onclick="fingerprintLogin()" title="Login with Fingerprint">
+          <i class="fa-solid fa-fingerprint"></i>
+        </button>
+        <p style="font-size:0.85rem; color:#666; margin-bottom:6px;">Touch the fingerprint sensor to login</p>
+        <p class="gate-use-password" onclick="showPasswordFallback()">Use Password Instead</p>
+      </div>
+
+      <div id="passwordLoginBox">
+        <input type="password" id="gatePassInput" placeholder="Enter Admin Password" onkeydown="if(event.key==='Enter') gateLogin();">
+        <button onclick="gateLogin()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+      </div>
+
       <div id="gateError"></div>
     </div>
   </div>
@@ -840,6 +867,17 @@
           <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
             <button onclick="updateWelcomePopup()" class="form-btn" style="background:#6f42c1; margin-top:0; flex:1;">Save / Update</button>
             <button onclick="deleteWelcomePopup()" class="form-btn" style="background:#dc3545; margin-top:0; flex:1;">Delete (Disable Popup)</button>
+          </div>
+
+          <hr style="margin: 20px 0;">
+          <h4><i class="fa-solid fa-fingerprint"></i> Fingerprint Lock</h4>
+          <p style="font-size: 13px; color: #888; margin-top: 5px; margin-bottom: 10px;">
+            চালু করলে এই ডিভাইসে অ্যাডমিন লগইন ফিঙ্গারপ্রিন্ট/ফেস দিয়ে করা যাবে। ফিঙ্গারপ্রিন্ট কাজ না করলে পাসওয়ার্ড অপশন স্বয়ংক্রিয়ভাবে দেখানো হবে। (এটি প্রতিটি ডিভাইসের জন্য আলাদাভাবে সেট করতে হয়।)
+          </p>
+          <div id="fingerprintStatusText" style="margin-bottom: 10px; font-weight: 600; font-size: 0.9rem;"></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="btnEnableFingerprint" onclick="registerFingerprint()" class="form-btn" style="background:#17a2b8; margin-top:0; flex:1;"><i class="fa-solid fa-fingerprint"></i> Enable Fingerprint (This Device)</button>
+            <button id="btnDisableFingerprint" onclick="disableFingerprint()" class="form-btn" style="background:#dc3545; margin-top:0; flex:1; display:none;"><i class="fa-solid fa-ban"></i> Disable Fingerprint</button>
           </div>
 
           <hr style="margin: 20px 0;">
@@ -1266,6 +1304,7 @@
     let appliedCoupon = null;
     let couponDiscount = 0;
     let adminPassword = "01518411872";
+    let fingerprintEnabled = false; // synced from Firebase settings; the actual credential is stored per-device in localStorage
     let paymentNumbers = { bkash: '01345409887', nagad: '01345409887', rocket: '01345409887' };
     
     let deliverySettings = {
@@ -1301,11 +1340,13 @@
       initApp();
       initLiveVisitorPresence();
       populateDistricts();
+      updateFingerprintSettingsUI();
 
       // If this browser tab already passed the login gate in this session, skip straight to the dashboard.
       if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
         showAdminDashboard();
       } else {
+        initFingerprintGate();
         document.getElementById('gatePassInput').focus();
       }
 
@@ -1694,6 +1735,9 @@
               document.getElementById('settingSiteCode').value = settings.siteCode;
             }
             if(settings.adminPass) adminPassword = settings.adminPass;
+            fingerprintEnabled = !!settings.fingerprintEnabled;
+            initFingerprintGate();
+            updateFingerprintSettingsUI();
             if(settings.paymentNumbers) {
               paymentNumbers = settings.paymentNumbers;
               document.getElementById('bkashNum').value = paymentNumbers.bkash || '';
@@ -2775,6 +2819,151 @@
         showAdminDashboard();
       } else {
         errBox.innerText = 'Incorrect password. Try again.';
+      }
+    }
+
+    // --- Fingerprint (WebAuthn platform biometric) admin lock ---
+    // The credential itself is bound to this specific browser/device (that's how
+    // platform biometrics work); the on/off flag is synced via Firebase so every
+    // device knows fingerprint mode is active, but each device must register its
+    // own fingerprint once via "Enable Fingerprint" in Settings.
+
+    function bufferToBase64Url(buf) {
+      const bytes = new Uint8Array(buf);
+      let binary = '';
+      bytes.forEach(b => binary += String.fromCharCode(b));
+      return window.btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function base64UrlToBuffer(b64) {
+      let str = b64.replace(/-/g, '+').replace(/_/g, '/');
+      while (str.length % 4) str += '=';
+      const binary = window.atob(str);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes.buffer;
+    }
+
+    function initFingerprintGate() {
+      if (sessionStorage.getItem('isAdminLoggedIn') === 'true') return;
+      const credId = localStorage.getItem('adminFingerprintCredId');
+      const fpBox = document.getElementById('fingerprintLoginBox');
+      const pwBox = document.getElementById('passwordLoginBox');
+      if (!fpBox || !pwBox) return;
+      if (fingerprintEnabled && credId && window.PublicKeyCredential) {
+        fpBox.style.display = 'block';
+        pwBox.style.display = 'none';
+        document.getElementById('gateError').innerText = '';
+      } else {
+        fpBox.style.display = 'none';
+        pwBox.style.display = 'block';
+      }
+    }
+
+    function showPasswordFallback() {
+      document.getElementById('fingerprintLoginBox').style.display = 'none';
+      document.getElementById('passwordLoginBox').style.display = 'block';
+      document.getElementById('gateError').innerText = '';
+      const input = document.getElementById('gatePassInput');
+      if (input) input.focus();
+    }
+
+    async function fingerprintLogin() {
+      const errBox = document.getElementById('gateError');
+      errBox.innerText = '';
+      const credId = localStorage.getItem('adminFingerprintCredId');
+      if (!credId || !window.PublicKeyCredential) {
+        showPasswordFallback();
+        return;
+      }
+      try {
+        const challenge = new Uint8Array(32);
+        crypto.getRandomValues(challenge);
+        const assertion = await navigator.credentials.get({
+          publicKey: {
+            challenge: challenge,
+            allowCredentials: [{ id: base64UrlToBuffer(credId), type: 'public-key' }],
+            userVerification: 'required',
+            timeout: 30000
+          }
+        });
+        if (assertion) {
+          sessionStorage.setItem('isAdminLoggedIn', 'true');
+          showAdminDashboard();
+        }
+      } catch (err) {
+        console.warn('Fingerprint login failed/cancelled:', err);
+        errBox.innerText = 'ফিঙ্গারপ্রিন্ট কাজ করেনি। পাসওয়ার্ড দিয়ে লগইন করুন।';
+        showPasswordFallback();
+      }
+    }
+
+    async function registerFingerprint() {
+      if (!window.PublicKeyCredential) {
+        alert('এই ব্রাউজার/ডিভাইসে ফিঙ্গারপ্রিন্ট লক সাপোর্ট নেই।');
+        return;
+      }
+      try {
+        const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        if (!available) {
+          alert('এই ডিভাইসে কোনো ফিঙ্গারপ্রিন্ট/বায়োমেট্রিক সেন্সর পাওয়া যায়নি।');
+          return;
+        }
+        const challenge = new Uint8Array(32);
+        crypto.getRandomValues(challenge);
+        const userId = new Uint8Array(16);
+        crypto.getRandomValues(userId);
+        const credential = await navigator.credentials.create({
+          publicKey: {
+            challenge: challenge,
+            rp: { name: 'Shoukhin Admin Portal' },
+            user: { id: userId, name: 'admin', displayName: 'Shoukhin Admin' },
+            pubKeyCredParams: [
+              { alg: -7, type: 'public-key' },
+              { alg: -257, type: 'public-key' }
+            ],
+            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },
+            timeout: 60000
+          }
+        });
+        const credId = bufferToBase64Url(credential.rawId);
+        localStorage.setItem('adminFingerprintCredId', credId);
+        fingerprintEnabled = true;
+        if (window.db) window.update(window.ref(window.db, 'settings'), { fingerprintEnabled: true });
+        alert('এই ডিভাইসে ফিঙ্গারপ্রিন্ট লক সফলভাবে চালু হয়েছে!');
+        updateFingerprintSettingsUI();
+      } catch (err) {
+        console.error('Fingerprint registration failed:', err);
+        alert('ফিঙ্গারপ্রিন্ট রেজিস্ট্রেশন ব্যর্থ হয়েছে: ' + err.message);
+      }
+    }
+
+    function disableFingerprint() {
+      localStorage.removeItem('adminFingerprintCredId');
+      fingerprintEnabled = false;
+      if (window.db) window.update(window.ref(window.db, 'settings'), { fingerprintEnabled: false });
+      alert('ফিঙ্গারপ্রিন্ট লক বন্ধ করা হয়েছে। এখন পাসওয়ার্ড দিয়ে লগইন করতে হবে।');
+      updateFingerprintSettingsUI();
+      initFingerprintGate();
+    }
+
+    function updateFingerprintSettingsUI() {
+      const statusEl = document.getElementById('fingerprintStatusText');
+      const btnEnable = document.getElementById('btnEnableFingerprint');
+      const btnDisable = document.getElementById('btnDisableFingerprint');
+      if (!statusEl || !btnEnable || !btnDisable) return;
+      const credId = localStorage.getItem('adminFingerprintCredId');
+      if (fingerprintEnabled && credId) {
+        statusEl.innerHTML = '<span style="color:#1e8449;"><i class="fa-solid fa-circle-check"></i> এই ডিভাইসে ফিঙ্গারপ্রিন্ট লক চালু আছে</span>';
+        btnEnable.style.display = 'none';
+        btnDisable.style.display = 'block';
+      } else if (fingerprintEnabled && !credId) {
+        statusEl.innerHTML = '<span style="color:#e67e22;"><i class="fa-solid fa-triangle-exclamation"></i> ফিঙ্গারপ্রিন্ট চালু আছে কিন্তু এই ডিভাইসে রেজিস্টার করা নেই</span>';
+        btnEnable.style.display = 'block';
+        btnDisable.style.display = 'none';
+      } else {
+        statusEl.innerHTML = '<span style="color:#888;"><i class="fa-solid fa-circle-xmark"></i> ফিঙ্গারপ্রিন্ট লক বন্ধ আছে</span>';
+        btnEnable.style.display = 'block';
+        btnDisable.style.display = 'none';
       }
     }
 
