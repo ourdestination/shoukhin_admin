@@ -54,7 +54,12 @@
 
     #adminLoginGate {
       position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #2c3e50 0%, #4a235a 100%); padding: 20px;
+      background: linear-gradient(135deg, #2c3e50 0%, #4a235a 100%); padding: 20px; overflow-y: auto;
+    }
+    @media (max-width: 600px) {
+      /* On mobile the on-screen keyboard shrinks the visible area, so anchor the box
+         near the top instead of dead-center to keep the password field above the keyboard. */
+      #adminLoginGate { align-items: flex-start; padding-top: 12vh; }
     }
     .admin-gate-box {
       background: #fff; border-radius: 16px; padding: 40px 32px; width: 100%; max-width: 380px;
@@ -528,6 +533,8 @@
           <input type="text" id="pSizes" placeholder="Sizes (Comma separated, e.g. S, M, L, XL)">
           <input type="text" id="pOffer" placeholder="Offer Details (Optional, e.g. 10% OFF)">
           <input type="number" id="pStock" placeholder="Total Stock Quantity" required>
+          <input type="text" id="pWarranty" placeholder="Guarantee/Warranty (Optional, e.g. 7 Days Warranty)">
+          <textarea id="pDescription" placeholder="Product Description (Optional)" style="grid-column: span 2; min-height: 70px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif; resize: vertical;"></textarea>
 
           <div style="grid-column: span 2;">
             <label style="font-weight: bold; font-size:0.85rem;">Select Product Images (Multiple Allowed, Max: 200KB each):</label>
@@ -873,6 +880,16 @@
               <div id="pdSoldRow" class="pd-sold-row"><i class="fa-solid fa-bag-shopping"></i> <span id="pdSoldText">0 sold</span></div>
               <div id="pdPrice" class="price" style="font-size:1.3rem;"></div>
 
+              <div id="pdWarrantySection" style="display:none; margin:4px 0 8px;">
+                <span style="display:inline-flex; align-items:center; gap:6px; background:#e8f5e9; color:#1e7e34; padding:5px 12px; border-radius:8px; font-size:0.8rem; font-weight:600;">
+                  <i class="fa-solid fa-shield-halved"></i> <span id="pdWarrantyText"></span>
+                </span>
+              </div>
+              <div id="pdDescriptionSection" style="display:none; margin:0 0 8px;">
+                <label class="pd-label" style="margin-top:0;">বিবরণ:</label>
+                <p id="pdDescriptionText" style="font-size:0.85rem; color:#555; white-space:pre-wrap; line-height:1.5; margin:0;"></p>
+              </div>
+
               <div id="pdColorSection" style="display:none;">
                 <label class="pd-label">Color:</label>
                 <div id="pdColorOptions" class="pd-chip-row"></div>
@@ -1061,6 +1078,10 @@
       <input type="text" id="editPOffer">
       <label style="font-size:12px; font-weight:bold;">Total Stock Quantity:</label>
       <input type="number" id="editPStock" required>
+      <label style="font-size:12px; font-weight:bold;">Guarantee/Warranty:</label>
+      <input type="text" id="editPWarranty" placeholder="e.g. 7 Days Warranty">
+      <label style="font-size:12px; font-weight:bold;">Product Description:</label>
+      <textarea id="editPDescription" placeholder="Optional" style="width:100%; min-height:70px; padding:8px; border-radius:6px; border:1px solid #ccc; font-family:'Poppins', sans-serif; resize:vertical;"></textarea>
 
       <label style="font-size:12px; font-weight:bold; margin-top:8px; display:block;">Add/Change Images (Max: 200KB each):</label>
       <input type="file" id="editPImgFile" accept="image/*" multiple>
@@ -1260,7 +1281,9 @@
     let welcomePopupTriggered = false;
 
     let uploadedProductImages = [];
+    let uploadedProductImageColors = [];
     let editProductImages = [];
+    let editProductImageColors = [];
     let editCatNewImg = "";
     let deliveryCharge = 0;
     let lastPlacedOrderId = "";
@@ -1286,18 +1309,36 @@
         document.getElementById('gatePassInput').focus();
       }
 
+      // When the on-screen keyboard opens on mobile, make sure the password field
+      // stays visible above it instead of being hidden underneath.
+      document.getElementById('gatePassInput').addEventListener('focus', function() {
+        const el = this;
+        setTimeout(() => { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300);
+      });
+
       document.getElementById('pImgFile').addEventListener('change', function(e) {
         handleMultipleImageUpload(e.target.files, (imgs) => {
           uploadedProductImages = imgs;
-          renderImagePreviews('pImgPreview', uploadedProductImages);
+          uploadedProductImageColors = [];
+          renderProductImagePreviews('pImgPreview', uploadedProductImages, uploadedProductImageColors, 'pColors');
         });
       });
 
       document.getElementById('editPImgFile').addEventListener('change', function(e) {
         handleMultipleImageUpload(e.target.files, (imgs) => {
           editProductImages = imgs;
-          renderImagePreviews('editPImgPreview', editProductImages);
+          editProductImageColors = [];
+          renderProductImagePreviews('editPImgPreview', editProductImages, editProductImageColors, 'editPColors');
         });
+      });
+
+      // Re-render the color-tag dropdowns whenever the colors list changes, so newly
+      // typed colors become selectable without needing to re-upload the images.
+      document.getElementById('pColors').addEventListener('input', () => {
+        renderProductImagePreviews('pImgPreview', uploadedProductImages, uploadedProductImageColors, 'pColors');
+      });
+      document.getElementById('editPColors').addEventListener('input', () => {
+        renderProductImagePreviews('editPImgPreview', editProductImages, editProductImageColors, 'editPColors');
       });
 
       document.getElementById('editCatImgFile').addEventListener('change', function(e) {
@@ -1384,6 +1425,57 @@
       imagesArray.forEach((src) => {
         container.innerHTML += `<img src="${src}" style="width:45px; height:45px; object-fit:cover; border-radius:4px; border:1px solid #ccc;">`;
       });
+    }
+
+    // Renders product image thumbnails with a small "which color is this?" dropdown under
+    // each one, so a specific photo can be tagged to a specific color variant. tagsArray is
+    // mutated in place (parallel to imagesArray) as the admin picks colors for each image.
+    function renderProductImagePreviews(containerId, imagesArray, tagsArray, colorsInputId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      const colorsRaw = document.getElementById(colorsInputId).value.trim();
+      const colorsList = colorsRaw ? colorsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+      while (tagsArray.length < imagesArray.length) tagsArray.push('');
+      tagsArray.length = imagesArray.length;
+
+      imagesArray.forEach((src, idx) => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:3px;';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.cssText = 'width:45px; height:45px; object-fit:cover; border-radius:4px; border:1px solid #ccc;';
+        wrap.appendChild(img);
+
+        if (colorsList.length > 0) {
+          const sel = document.createElement('select');
+          sel.style.cssText = 'font-size:10px; max-width:72px;';
+          sel.title = 'Which color is this photo for?';
+          sel.innerHTML = '<option value="">All Colors</option>' +
+            colorsList.map(c => `<option value="${c.replace(/"/g, '&quot;')}" ${tagsArray[idx] === c ? 'selected' : ''}>${c}</option>`).join('');
+          sel.onchange = function() { tagsArray[idx] = this.value; };
+          wrap.appendChild(sel);
+        }
+
+        container.appendChild(wrap);
+      });
+    }
+
+    // Groups tagged images by color, e.g. { Red: [img1, img2], Blue: [img3] }.
+    // Untagged images are left out here since they already live in the product's
+    // main "images" array and are used as the fallback gallery.
+    function buildColorImagesMap(imagesArray, tagsArray) {
+      const map = {};
+      imagesArray.forEach((src, idx) => {
+        const c = tagsArray[idx];
+        if (c) {
+          if (!map[c]) map[c] = [];
+          map[c].push(src);
+        }
+      });
+      return map;
     }
 
     function playNotificationSound() {
@@ -1637,7 +1729,8 @@
                 document.getElementById('welcomePopupText').value = settings.welcomePopup.content;
               }
               toggleWelcomePopupType();
-              showWelcomePopupOnEntry();
+              // Note: the Welcome/Entry Popup is a customer-facing storefront feature (shown on index.html).
+              // It should never appear on this standalone Admin Portal, including at login time.
             } else {
               welcomePopupSettings = {};
             }
@@ -1929,19 +2022,7 @@
       pdQtyValue = 1;
       pdReviewRatingValue = 5;
 
-      const images = (p.images && p.images.length > 0) ? p.images : [p.img || 'https://via.placeholder.com/400'];
-
-      document.getElementById('pdMainImg').src = images[0];
-      const thumbsEl = document.getElementById('pdThumbs');
-      thumbsEl.innerHTML = '';
-      if (images.length > 1) {
-        images.forEach((img, idx) => {
-          thumbsEl.innerHTML += `<img src="${img}" class="pd-thumb ${idx === 0 ? 'active' : ''}" onclick="selectPdImage('${img}', this)">`;
-        });
-        thumbsEl.style.display = 'flex';
-      } else {
-        thumbsEl.style.display = 'none';
-      }
+      renderPdGallery(p);
 
       document.getElementById('pdName').innerText = p.name;
 
@@ -1949,6 +2030,22 @@
       document.getElementById('pdPrice').innerHTML = hasDiscount
         ? `<span class="old-price">${p.price} ৳</span>${p.discountPrice} ৳`
         : `${p.price} ৳`;
+
+      const warrantySection = document.getElementById('pdWarrantySection');
+      if (p.warranty && p.warranty.trim()) {
+        document.getElementById('pdWarrantyText').innerText = p.warranty;
+        warrantySection.style.display = 'block';
+      } else {
+        warrantySection.style.display = 'none';
+      }
+
+      const descSection = document.getElementById('pdDescriptionSection');
+      if (p.description && p.description.trim()) {
+        document.getElementById('pdDescriptionText').innerText = p.description;
+        descSection.style.display = 'block';
+      } else {
+        descSection.style.display = 'none';
+      }
 
       const stats = getProductRatingStats(p);
       document.getElementById('pdRatingRow').innerHTML = stats.count > 0
@@ -1971,6 +2068,30 @@
       document.getElementById('pdMainImg').src = src;
       document.querySelectorAll('#pdThumbs .pd-thumb').forEach(t => t.classList.remove('active'));
       if (el) el.classList.add('active');
+    }
+
+    // Returns the photos to show for a given color: the color's own tagged photos if any
+    // exist, otherwise the product's regular photo set.
+    function getPdImagesForColor(p, color) {
+      if (p.colorImages && color && p.colorImages[color] && p.colorImages[color].length > 0) {
+        return p.colorImages[color];
+      }
+      return (p.images && p.images.length > 0) ? p.images : [p.img || 'https://via.placeholder.com/400'];
+    }
+
+    function renderPdGallery(p) {
+      const images = getPdImagesForColor(p, pdSelectedColor);
+      document.getElementById('pdMainImg').src = images[0];
+      const thumbsEl = document.getElementById('pdThumbs');
+      thumbsEl.innerHTML = '';
+      if (images.length > 1) {
+        images.forEach((img, idx) => {
+          thumbsEl.innerHTML += `<img src="${img}" class="pd-thumb ${idx === 0 ? 'active' : ''}" onclick="selectPdImage('${img}', this)">`;
+        });
+        thumbsEl.style.display = 'flex';
+      } else {
+        thumbsEl.style.display = 'none';
+      }
     }
 
     function renderPdVariantOptions(p) {
@@ -2004,6 +2125,7 @@
       pdSelectedColor = c;
       document.querySelectorAll('#pdColorOptions .pd-chip').forEach(b => b.classList.remove('active'));
       if (el) el.classList.add('active');
+      if (currentDetailProduct) renderPdGallery(currentDetailProduct);
     }
 
     function selectPdSize(s, el) {
@@ -2043,7 +2165,7 @@
       const effectivePrice = (p.discountPrice && p.discountPrice > 0 && p.discountPrice < p.price) ? p.discountPrice : p.price;
       const colorStr = pdSelectedColor || 'Standard';
       const sizeStr = pdSelectedSize || 'Standard';
-      const itemImg = (p.images && p.images.length > 0) ? p.images[0] : (p.img || 'https://via.placeholder.com/60');
+      const itemImg = getPdImagesForColor(p, pdSelectedColor)[0];
 
       const existing = cart.find(c => c.id === p.id && c.color === colorStr && c.size === sizeStr);
       if (existing) {
@@ -2057,7 +2179,9 @@
           color: colorStr,
           size: sizeStr,
           qty: pdQtyValue,
-          img: itemImg
+          img: itemImg,
+          warranty: p.warranty || '',
+          description: p.description || ''
         });
       }
 
@@ -2203,7 +2327,9 @@
           color: colorsStr,
           size: sizesStr,
           qty: 1,
-          img: itemImg
+          img: itemImg,
+          warranty: item.warranty || '',
+          description: item.description || ''
         });
       }
 
@@ -2698,8 +2824,11 @@
         sizes: sizesInput ? sizesInput.split(',').map(s => s.trim()) : [],
         offer: document.getElementById('pOffer').value,
         stock: Number(document.getElementById('pStock').value),
+        warranty: document.getElementById('pWarranty').value.trim(),
+        description: document.getElementById('pDescription').value.trim(),
         images: uploadedProductImages,
         img: uploadedProductImages[0] || '',
+        colorImages: buildColorImagesMap(uploadedProductImages, uploadedProductImageColors),
         isOffer: false,
         createdAt: Date.now(),
         order: products.length
@@ -2710,6 +2839,7 @@
       document.getElementById('addProductForm').reset();
       document.getElementById('pImgPreview').innerHTML = '';
       uploadedProductImages = [];
+      uploadedProductImageColors = [];
     });
 
     let draggedProductId = null;
@@ -2815,6 +2945,8 @@
       document.getElementById('editPSizes').value = p.sizes ? p.sizes.join(', ') : '';
       document.getElementById('editPOffer').value = p.offer || '';
       document.getElementById('editPStock').value = p.stock;
+      document.getElementById('editPWarranty').value = p.warranty || '';
+      document.getElementById('editPDescription').value = p.description || '';
 
       const catSelect = document.getElementById('editPCategory');
       catSelect.innerHTML = '';
@@ -2824,7 +2956,17 @@
       });
 
       editProductImages = p.images || (p.img ? [p.img] : []);
-      renderImagePreviews('editPImgPreview', editProductImages);
+      // Figure out which color (if any) each existing image was tagged with, so the
+      // dropdowns reopen showing the product's current color/photo assignments.
+      editProductImageColors = editProductImages.map(src => {
+        if (p.colorImages) {
+          for (const c in p.colorImages) {
+            if (p.colorImages[c].includes(src)) return c;
+          }
+        }
+        return '';
+      });
+      renderProductImagePreviews('editPImgPreview', editProductImages, editProductImageColors, 'editPColors');
       openModal('editProductModal');
     }
 
@@ -2846,8 +2988,11 @@
         sizes: sizesInput ? sizesInput.split(',').map(s => s.trim()) : [],
         offer: document.getElementById('editPOffer').value,
         stock: Number(document.getElementById('editPStock').value),
+        warranty: document.getElementById('editPWarranty').value.trim(),
+        description: document.getElementById('editPDescription').value.trim(),
         images: editProductImages,
-        img: editProductImages[0] || ''
+        img: editProductImages[0] || '',
+        colorImages: buildColorImagesMap(editProductImages, editProductImageColors)
       };
 
       window.update(window.ref(window.db, 'products/' + pId), updateData);
@@ -2977,9 +3122,47 @@
       openModal('customerDetailModal');
     }
 
+    function restoreStockForOrder(order) {
+      if (!order || !order.items) return;
+      order.items.forEach(c => {
+        if (!c.id.startsWith('COMBO-')) {
+          const prod = products.find(p => p.id === c.id);
+          if (prod) {
+            const pRef = window.ref(window.db, 'products/' + c.id);
+            const newStock = (prod.stock || 0) + c.qty;
+            const newSold = Math.max(0, (prod.sold || 0) - c.qty);
+            window.update(pRef, { stock: newStock, sold: newSold });
+          }
+        }
+      });
+    }
+
+    function deductStockForOrder(order) {
+      if (!order || !order.items) return;
+      order.items.forEach(c => {
+        if (!c.id.startsWith('COMBO-')) {
+          const prod = products.find(p => p.id === c.id);
+          if (prod) {
+            const pRef = window.ref(window.db, 'products/' + c.id);
+            const newStock = Math.max(0, (prod.stock || 0) - c.qty);
+            const newSold = (prod.sold || 0) + c.qty;
+            window.update(pRef, { stock: newStock, sold: newSold });
+          }
+        }
+      });
+    }
+
     function changeOrderStatus(orderId, status) {
       const order = orders.find(o => o.id === orderId);
+      const previousStatus = order ? order.status : null;
       window.update(window.ref(window.db, 'orders/' + orderId), { status });
+
+      // Cancelling an order returns its items to stock; un-cancelling deducts them again.
+      if (order && status === 'Cancelled' && previousStatus !== 'Cancelled') {
+        restoreStockForOrder(order);
+      } else if (order && previousStatus === 'Cancelled' && status !== 'Cancelled') {
+        deductStockForOrder(order);
+      }
 
       if (order) {
         const phone = order.userPhone;
@@ -3837,10 +4020,11 @@
       let itemsHtml = '';
       if(o.items && o.items.length > 0) {
         o.items.forEach((item, idx) => {
+          const warrantyLine = item.warranty ? `<br><small style="color:#1e7e34;">Warranty: ${escapeHtml(item.warranty)}</small>` : '';
           itemsHtml += `
             <tr>
               <td>${idx + 1}</td>
-              <td>${item.name} (${item.color || 'Std'}/${item.size || 'Std'})</td>
+              <td>${item.name} (${item.color || 'Std'}/${item.size || 'Std'})${warrantyLine}</td>
               <td>${item.qty}</td>
               <td>${item.price}৳</td>
               <td>${item.price * item.qty}৳</td>
