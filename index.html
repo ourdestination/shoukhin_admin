@@ -99,6 +99,19 @@
     .gate-use-password { color: #888; font-size: 0.82rem; margin-top: 4px; cursor: pointer; text-decoration: underline; }
     .gate-use-password:hover { color: var(--primary); }
 
+    .pin-digit-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; }
+    .pin-digit-box {
+      width: 52px !important; height: 58px; text-align: center; font-size: 1.6rem !important; font-weight: 700;
+      border: 1.5px solid #ddd; border-radius: 10px; margin-bottom: 0 !important; padding: 0 !important;
+    }
+    .pin-digit-box:focus { border-color: var(--primary); }
+    .pin-digit-box.pin-error { border-color: #dc3545; animation: pinShake 0.35s; }
+    @keyframes pinShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
     .admin-order-toast {
       position: fixed; top: 20px; right: 20px; z-index: 100000; background: #fff; border-left: 6px solid var(--primary);
       box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 10px; padding: 14px 18px; min-width: 260px; max-width: 320px;
@@ -420,6 +433,49 @@
     .footer-section { flex: 1; min-width: 220px; }
     .counter-box { background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; display: inline-block; margin-top: 10px; }
 
+    /* ===== App-style admin dashboard (mobile) ===== */
+    .admin-topbar-sticky { position: sticky; top: 0; background: #fff; z-index: 500; }
+    .admin-nav-scroll {
+      display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      scroll-snap-type: x proximity; gap: 8px;
+    }
+    .admin-nav-scroll::-webkit-scrollbar { display: none; }
+    .admin-nav-scroll .admin-tab { flex: 0 0 auto; white-space: nowrap; scroll-snap-align: start; }
+
+    /* Bottom app-nav for the admin dashboard: the 4 most-used sections plus a
+       "More" sheet for the rest. Hidden on desktop; shown on mobile only while
+       logged in (toggled via body.admin-logged-in in the media query below). */
+    .bottom-app-nav-admin {
+      display: none;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 2500;
+      background: #fff; box-shadow: 0 -4px 18px rgba(0,0,0,0.14);
+      border-radius: 18px 18px 0 0;
+      padding: 6px 2px calc(6px + env(safe-area-inset-bottom, 0px)) 2px;
+    }
+    .bottom-app-nav-admin .bottom-app-nav-inner { display: flex; align-items: stretch; justify-content: space-around; }
+    .bottom-app-nav-admin .bottom-nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; padding: 7px 2px; background: none; border: none; color: #9aa0a6; font-family: 'Poppins', sans-serif;
+      font-size: 0.65rem; font-weight: 600; cursor: pointer; position: relative; -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s, transform 0.15s;
+    }
+    .bottom-app-nav-admin .bottom-nav-item i { font-size: 1.2rem; }
+    .bottom-app-nav-admin .bottom-nav-item:active { transform: scale(0.92); }
+    .bottom-app-nav-admin .bottom-nav-item.active { color: var(--primary); }
+    .bottom-app-nav-admin .bottom-nav-item .nav-item-badge {
+      position: absolute; top: 0px; right: 22%; background: red; color: white; border-radius: 50%;
+      min-width: 16px; height: 16px; font-size: 9.5px; display: none; align-items: center; justify-content: center;
+      padding: 0 3px; box-shadow: 0 0 0 2px #fff;
+    }
+    .admin-more-list { display: flex; flex-direction: column; gap: 8px; }
+    .admin-more-list button {
+      display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 12px 14px;
+      background: #f8f9fa; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 600; color: var(--dark);
+      cursor: pointer; font-family: 'Poppins', sans-serif;
+    }
+    .admin-more-list button i { color: var(--primary); width: 18px; text-align: center; }
+    .admin-more-list button:active { background: #f0f0f0; }
+
     @media (max-width: 600px) {
       header { padding: 10px 3%; }
       #siteTitle { font-size: 0.95rem; }
@@ -441,6 +497,22 @@
       .offer-banner { padding: 12px 10px 14px; border-radius: 14px; }
       .offer-banner-title { font-size: 1rem; }
       .floating-btn { width: 42px; height: 42px; font-size: 19px; }
+
+      /* Admin dashboard app-shell feel on mobile: edge-to-edge card, sticky
+         title bar, and a horizontally-swipeable pill tab bar instead of the
+         wrapping button grid (which eats a lot of vertical space on phones). */
+      .admin-dashboard { padding: 12px 10px; border-radius: 0; margin-top: 0; }
+      .admin-topbar-sticky { padding: 8px 0 6px; margin: -12px -10px 0; padding-left: 10px; padding-right: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+      .admin-topbar-sticky h2 { font-size: 1.05rem; }
+      .admin-live-box { font-size: 0.75rem; padding: 3px 8px; }
+      .admin-nav { flex-wrap: nowrap; border-bottom: none; padding-bottom: 4px; margin-bottom: 14px; position: sticky; top: 46px; background: #fff; z-index: 499; padding-top: 4px; }
+      .admin-tab { padding: 8px 14px; border-radius: 20px; font-size: 0.8rem; }
+
+      /* Bottom nav takes over primary navigation on mobile while logged in;
+         the top pill tab bar stays available too (scroll up) for the sections
+         that live under "More". */
+      body.admin-logged-in { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+      body.admin-logged-in .bottom-app-nav-admin { display: block; }
     }
   </style>
 </head>
@@ -458,12 +530,28 @@
           <i class="fa-solid fa-fingerprint"></i>
         </button>
         <p style="font-size:0.85rem; color:#666; margin-bottom:6px;">Touch the fingerprint sensor to login</p>
+        <p class="gate-use-password" id="gateUsePinLink" onclick="showPinLoginBox()" style="display:none;">Use PIN Instead</p>
+        <p class="gate-use-password" onclick="showPasswordFallback()">Use Password Instead</p>
+      </div>
+
+      <div id="pinLoginBox" style="display:none;">
+        <p style="font-size:0.85rem; color:#666; margin-bottom:12px;">Enter your 4-digit PIN</p>
+        <div class="pin-digit-row">
+          <input type="tel" class="pin-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+          <input type="tel" class="pin-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+          <input type="tel" class="pin-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+          <input type="tel" class="pin-digit-box" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+        </div>
+        <button onclick="pinLogin()"><i class="fa-solid fa-unlock"></i> Login</button>
+        <p class="gate-use-password" id="gateUseFingerprintFromPinLink" onclick="showFingerprintFromPin()" style="display:none;">Use Fingerprint Instead</p>
         <p class="gate-use-password" onclick="showPasswordFallback()">Use Password Instead</p>
       </div>
 
       <div id="passwordLoginBox">
         <input type="password" id="gatePassInput" placeholder="Enter Admin Password" onkeydown="if(event.key==='Enter') gateLogin();">
         <button onclick="gateLogin()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+        <p class="gate-use-password" id="gateUsePinFromPassLink" onclick="showPinLoginBox()" style="display:none;">Use PIN Instead</p>
+        <p class="gate-use-password" id="gateUseFingerprintFromPassLink" onclick="showFingerprintFromPassword()" style="display:none;">Use Fingerprint Instead</p>
       </div>
 
       <div id="gateError"></div>
@@ -524,6 +612,7 @@
 
     <!-- Admin Panel -->
     <div id="adminPanel" class="admin-dashboard">
+      <div class="admin-topbar-sticky">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <h2><i class="fa-solid fa-gauge"></i> Shop Management (Admin)</h2>
         <div class="admin-live-box"><span class="live-dot" style="width:7px;height:7px;"></span> Live Visitors: <span id="adminLiveVisitorCount">0</span></div>
@@ -535,15 +624,16 @@
       </div>
       <hr style="margin: 10px 0;">
 
-      <div class="admin-nav">
-        <button class="admin-tab active" onclick="switchAdminTab('pTab', this)">Products & Stock</button>
-        <button class="admin-tab" onclick="switchAdminTab('cTab', this)">Categories</button>
-        <button class="admin-tab" onclick="switchAdminTab('oTab', this)">Orders</button>
-        <button class="admin-tab" onclick="switchAdminTab('offTab', this)">Offer Management</button>
-        <button class="admin-tab" onclick="switchAdminTab('couponTab', this)">Coupon Management</button>
-        <button class="admin-tab" onclick="switchAdminTab('cashTab', this)">Cashbook</button>
-        <button class="admin-tab" onclick="switchAdminTab('uTab', this)">Customer Data</button>
-        <button class="admin-tab" onclick="switchAdminTab('sTab', this)">Website Settings</button>
+      <div class="admin-nav admin-nav-scroll">
+        <button class="admin-tab active" data-tab="pTab" onclick="switchAdminTab('pTab', this)">Products & Stock</button>
+        <button class="admin-tab" data-tab="cTab" onclick="switchAdminTab('cTab', this)">Categories</button>
+        <button class="admin-tab" data-tab="oTab" onclick="switchAdminTab('oTab', this)">Orders</button>
+        <button class="admin-tab" data-tab="offTab" onclick="switchAdminTab('offTab', this)">Offer Management</button>
+        <button class="admin-tab" data-tab="couponTab" onclick="switchAdminTab('couponTab', this)">Coupon Management</button>
+        <button class="admin-tab" data-tab="cashTab" onclick="switchAdminTab('cashTab', this)">Cashbook</button>
+        <button class="admin-tab" data-tab="uTab" onclick="switchAdminTab('uTab', this)">Customer Data</button>
+        <button class="admin-tab" data-tab="sTab" onclick="switchAdminTab('sTab', this)">Website Settings</button>
+      </div>
       </div>
 
       <!-- Products & Stock Tab -->
@@ -881,10 +971,58 @@
           </div>
 
           <hr style="margin: 20px 0;">
+          <h4><i class="fa-solid fa-shield-halved"></i> 4-Digit PIN Lock</h4>
+          <p style="font-size: 13px; color: #888; margin-top: 5px; margin-bottom: 10px;">
+            ফিঙ্গারপ্রিন্ট যেহেতু সব ডিভাইসে সবসময় কাজ নাও করতে পারে, তাই বিকল্প হিসেবে একটি ৪-সংখ্যার পিন সেট করে রাখা যায়। এই পিন সব ডিভাইস থেকেই ব্যবহার করা যাবে (পাসওয়ার্ডের মতোই সিঙ্ক থাকে)।
+          </p>
+          <div id="pinStatusText" style="margin-bottom: 10px; font-weight: 600; font-size: 0.9rem;"></div>
+          <input type="text" id="newAdminPin" placeholder="৪ সংখ্যার নতুন পিন (যেমন: 1234)" inputmode="numeric" pattern="[0-9]*" maxlength="4" style="letter-spacing:4px; text-align:center; font-size:1.1rem;">
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="btnEnablePin" onclick="enablePinLock()" class="form-btn" style="background:#17a2b8; margin-top:0; flex:1;"><i class="fa-solid fa-shield-halved"></i> Set / Update PIN</button>
+            <button id="btnDisablePin" onclick="disablePinLock()" class="form-btn" style="background:#dc3545; margin-top:0; flex:1; display:none;"><i class="fa-solid fa-ban"></i> Disable PIN Lock</button>
+          </div>
+
+          <hr style="margin: 20px 0;">
           <label><b>Change Admin Password:</b></label>
           <input type="password" id="newAdminPass" placeholder="New Password">
           <button onclick="changeAdminPassword()" class="form-btn" style="background: green;">Update Password</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin app-style bottom navigation (mobile only, shown while logged in) -->
+  <nav class="bottom-app-nav-admin" id="adminBottomNav">
+    <div class="bottom-app-nav-inner">
+      <button class="bottom-nav-item active" data-tab="pTab" onclick="goToAdminTab('pTab')">
+        <i class="fa-solid fa-box"></i><span>Products</span>
+      </button>
+      <button class="bottom-nav-item" data-tab="oTab" onclick="goToAdminTab('oTab')">
+        <i class="fa-solid fa-receipt"></i><span>Orders</span>
+        <span id="navAdminOrderBadge" class="nav-item-badge" style="display:none;">0</span>
+      </button>
+      <button class="bottom-nav-item" data-tab="cashTab" onclick="goToAdminTab('cashTab')">
+        <i class="fa-solid fa-book"></i><span>Cashbook</span>
+      </button>
+      <button class="bottom-nav-item" data-tab="uTab" onclick="goToAdminTab('uTab')">
+        <i class="fa-solid fa-users"></i><span>Customers</span>
+      </button>
+      <button class="bottom-nav-item" data-tab="more" onclick="openAdminMoreMenu()">
+        <i class="fa-solid fa-ellipsis"></i><span>More</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- "More" sheet: the remaining sections not on the bottom bar -->
+  <div id="adminMoreModal" class="modal">
+    <div class="modal-content" style="max-width:340px;">
+      <span class="close-btn" onclick="closeModal('adminMoreModal')">&times;</span>
+      <h3 style="margin-bottom:14px;">More</h3>
+      <div class="admin-more-list">
+        <button onclick="closeModal('adminMoreModal'); goToAdminTab('cTab');"><i class="fa-solid fa-layer-group"></i> Categories</button>
+        <button onclick="closeModal('adminMoreModal'); goToAdminTab('offTab');"><i class="fa-solid fa-fire"></i> Offer Management</button>
+        <button onclick="closeModal('adminMoreModal'); goToAdminTab('couponTab');"><i class="fa-solid fa-tags"></i> Coupon Management</button>
+        <button onclick="closeModal('adminMoreModal'); goToAdminTab('sTab');"><i class="fa-solid fa-gear"></i> Website Settings</button>
       </div>
     </div>
   </div>
@@ -1305,6 +1443,8 @@
     let couponDiscount = 0;
     let adminPassword = "01518411872";
     let fingerprintEnabled = false; // synced from Firebase settings; the actual credential is stored per-device in localStorage
+    let pinLockEnabled = false; // synced from Firebase settings, like adminPassword — works on every device
+    let adminPin = "";
     let paymentNumbers = { bkash: '01345409887', nagad: '01345409887', rocket: '01345409887' };
     
     let deliverySettings = {
@@ -1337,22 +1477,28 @@
       initLiveVisitorPresence();
       populateDistricts();
       updateFingerprintSettingsUI();
+      updatePinSettingsUI();
+      setupPinDigitInputs();
 
       // Login now persists (localStorage) until the admin explicitly logs out —
       // closing the tab/browser or refreshing no longer logs them out.
-      // Exception: if fingerprint lock is enabled on this device, the fingerprint
+      // Exception: if fingerprint lock and/or PIN lock is enabled, that lock's
       // gate must still be passed on every fresh page load, even if a previous
       // login is remembered.
       const isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
       const cachedFingerprintEnabled = localStorage.getItem('adminFingerprintEnabledCache') === 'true';
       const credId = localStorage.getItem('adminFingerprintCredId');
       const fingerprintLockActive = cachedFingerprintEnabled && credId && window.PublicKeyCredential;
+      const cachedPinEnabled = localStorage.getItem('adminPinEnabledCache') === 'true';
+      const anyLockActive = fingerprintLockActive || cachedPinEnabled;
 
-      if (isLoggedIn && !fingerprintLockActive) {
+      if (isLoggedIn && !anyLockActive) {
         showAdminDashboard();
       } else {
-        initFingerprintGate();
-        document.getElementById('gatePassInput').focus();
+        initGateFlow();
+        if (!fingerprintLockActive && !cachedPinEnabled) {
+          document.getElementById('gatePassInput').focus();
+        }
       }
 
       // When the on-screen keyboard opens on mobile, make sure the password field
@@ -1742,8 +1888,12 @@
             if(settings.adminPass) adminPassword = settings.adminPass;
             fingerprintEnabled = !!settings.fingerprintEnabled;
             localStorage.setItem('adminFingerprintEnabledCache', fingerprintEnabled ? 'true' : 'false');
-            initFingerprintGate();
+            pinLockEnabled = !!settings.pinLockEnabled;
+            adminPin = settings.adminPin || "";
+            localStorage.setItem('adminPinEnabledCache', pinLockEnabled ? 'true' : 'false');
+            initGateFlow();
             updateFingerprintSettingsUI();
+            updatePinSettingsUI();
             if(settings.paymentNumbers) {
               paymentNumbers = settings.paymentNumbers;
               document.getElementById('bkashNum').value = paymentNumbers.bkash || '';
@@ -2807,6 +2957,7 @@
     function showAdminDashboard() {
       document.getElementById('adminLoginGate').style.display = 'none';
       document.getElementById('adminPanel').style.display = 'block';
+      document.body.classList.add('admin-logged-in');
       // Ask permission for desktop notifications so new orders can alert the admin
       // even when this tab isn't focused.
       if (window.Notification && Notification.permission === 'default') {
@@ -2849,27 +3000,168 @@
       return bytes.buffer;
     }
 
-    function initFingerprintGate() {
+    // Decides which login method to show first: Fingerprint (if registered on
+    // this device) takes priority, then PIN (if enabled), then falls back to
+    // the full password. Links let the admin switch between whichever methods
+    // are currently turned on, since fingerprint doesn't always work on every
+    // device/browser.
+    function initGateFlow() {
       const credId = localStorage.getItem('adminFingerprintCredId');
       const fpBox = document.getElementById('fingerprintLoginBox');
+      const pinBox = document.getElementById('pinLoginBox');
       const pwBox = document.getElementById('passwordLoginBox');
-      if (!fpBox || !pwBox) return;
-      if (fingerprintEnabled && credId && window.PublicKeyCredential) {
+      if (!fpBox || !pinBox || !pwBox) return;
+
+      const fpAvailable = fingerprintEnabled && credId && window.PublicKeyCredential;
+      const pinAvailable = pinLockEnabled && adminPin;
+
+      document.getElementById('gateUsePinLink').style.display = pinAvailable ? 'block' : 'none';
+      document.getElementById('gateUseFingerprintFromPinLink').style.display = fpAvailable ? 'block' : 'none';
+      document.getElementById('gateUsePinFromPassLink').style.display = pinAvailable ? 'block' : 'none';
+      document.getElementById('gateUseFingerprintFromPassLink').style.display = fpAvailable ? 'block' : 'none';
+
+      fpBox.style.display = 'none';
+      pinBox.style.display = 'none';
+      pwBox.style.display = 'none';
+      document.getElementById('gateError').innerText = '';
+
+      if (fpAvailable) {
         fpBox.style.display = 'block';
-        pwBox.style.display = 'none';
-        document.getElementById('gateError').innerText = '';
+      } else if (pinAvailable) {
+        pinBox.style.display = 'block';
+        clearPinBoxes();
+        focusFirstPinBox();
       } else {
-        fpBox.style.display = 'none';
         pwBox.style.display = 'block';
       }
     }
 
     function showPasswordFallback() {
       document.getElementById('fingerprintLoginBox').style.display = 'none';
+      document.getElementById('pinLoginBox').style.display = 'none';
       document.getElementById('passwordLoginBox').style.display = 'block';
       document.getElementById('gateError').innerText = '';
       const input = document.getElementById('gatePassInput');
       if (input) input.focus();
+    }
+
+    function showPinLoginBox() {
+      document.getElementById('fingerprintLoginBox').style.display = 'none';
+      document.getElementById('passwordLoginBox').style.display = 'none';
+      document.getElementById('pinLoginBox').style.display = 'block';
+      document.getElementById('gateError').innerText = '';
+      clearPinBoxes();
+      focusFirstPinBox();
+    }
+
+    function showFingerprintFromPin() {
+      document.getElementById('pinLoginBox').style.display = 'none';
+      document.getElementById('passwordLoginBox').style.display = 'none';
+      document.getElementById('fingerprintLoginBox').style.display = 'block';
+      document.getElementById('gateError').innerText = '';
+    }
+
+    function showFingerprintFromPassword() {
+      document.getElementById('pinLoginBox').style.display = 'none';
+      document.getElementById('passwordLoginBox').style.display = 'none';
+      document.getElementById('fingerprintLoginBox').style.display = 'block';
+      document.getElementById('gateError').innerText = '';
+    }
+
+    // --- 4-digit PIN admin lock ---
+    // Unlike the fingerprint credential, the PIN itself is synced via Firebase
+    // settings (just like the admin password), so the same PIN works on every
+    // device — useful when biometrics aren't available or aren't working.
+
+    function setupPinDigitInputs() {
+      const boxes = document.querySelectorAll('#pinLoginBox .pin-digit-box');
+      boxes.forEach((box, idx) => {
+        box.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);
+          this.classList.remove('pin-error');
+          if (this.value && idx < boxes.length - 1) {
+            boxes[idx + 1].focus();
+          }
+          if (idx === boxes.length - 1 && this.value) {
+            const allFilled = Array.from(boxes).every(b => b.value);
+            if (allFilled) pinLogin();
+          }
+        });
+        box.addEventListener('keydown', function(e) {
+          if (e.key === 'Backspace' && !this.value && idx > 0) {
+            boxes[idx - 1].focus();
+          }
+        });
+      });
+    }
+
+    function clearPinBoxes() {
+      document.querySelectorAll('#pinLoginBox .pin-digit-box').forEach(b => {
+        b.value = '';
+        b.classList.remove('pin-error');
+      });
+    }
+
+    function focusFirstPinBox() {
+      const first = document.querySelector('#pinLoginBox .pin-digit-box');
+      if (first) setTimeout(() => first.focus(), 50);
+    }
+
+    function pinLogin() {
+      const boxes = document.querySelectorAll('#pinLoginBox .pin-digit-box');
+      const entered = Array.from(boxes).map(b => b.value).join('');
+      const errBox = document.getElementById('gateError');
+      if (entered.length < 4) return;
+
+      if (adminPin && entered === adminPin) {
+        localStorage.setItem('isAdminLoggedIn', 'true');
+        errBox.innerText = '';
+        showAdminDashboard();
+      } else {
+        errBox.innerText = 'ভুল পিন। আবার চেষ্টা করুন।';
+        boxes.forEach(b => b.classList.add('pin-error'));
+        clearPinBoxes();
+        focusFirstPinBox();
+      }
+    }
+
+    function enablePinLock() {
+      const pin = document.getElementById('newAdminPin').value.trim();
+      if (!/^[0-9]{4}$/.test(pin)) {
+        alert('অনুগ্রহ করে সঠিক ৪-সংখ্যার পিন দিন (শুধু সংখ্যা)।');
+        return;
+      }
+      adminPin = pin;
+      pinLockEnabled = true;
+      localStorage.setItem('adminPinEnabledCache', 'true');
+      if (window.db) window.update(window.ref(window.db, 'settings'), { adminPin: pin, pinLockEnabled: true });
+      alert('পিন লক সফলভাবে চালু/আপডেট হয়েছে!');
+      document.getElementById('newAdminPin').value = '';
+      updatePinSettingsUI();
+      initGateFlow();
+    }
+
+    function disablePinLock() {
+      pinLockEnabled = false;
+      localStorage.setItem('adminPinEnabledCache', 'false');
+      if (window.db) window.update(window.ref(window.db, 'settings'), { pinLockEnabled: false });
+      alert('পিন লক বন্ধ করা হয়েছে।');
+      updatePinSettingsUI();
+      initGateFlow();
+    }
+
+    function updatePinSettingsUI() {
+      const statusEl = document.getElementById('pinStatusText');
+      const btnEnable = document.getElementById('btnEnablePin');
+      const btnDisable = document.getElementById('btnDisablePin');
+      if (!statusEl || !btnEnable || !btnDisable) return;
+      if (pinLockEnabled && adminPin) {
+        statusEl.innerHTML = '<span style="color:#1e8449;"><i class="fa-solid fa-circle-check"></i> পিন লক চালু আছে (সব ডিভাইসে কাজ করবে)</span>';
+        btnDisable.style.display = 'block';
+      } else {
+        statusEl.innerHTML = '<span style="color:#888;"><i class="fa-solid fa-circle-xmark"></i> পিন লক বন্ধ আছে</span>';
+        btnDisable.style.display = 'none';
+      }
     }
 
     async function fingerprintLogin() {
@@ -2950,7 +3242,7 @@
       if (window.db) window.update(window.ref(window.db, 'settings'), { fingerprintEnabled: false });
       alert('ফিঙ্গারপ্রিন্ট লক বন্ধ করা হয়েছে। এখন পাসওয়ার্ড দিয়ে লগইন করতে হবে।');
       updateFingerprintSettingsUI();
-      initFingerprintGate();
+      initGateFlow();
     }
 
     function updateFingerprintSettingsUI() {
@@ -2978,7 +3270,8 @@
       localStorage.removeItem('isAdminLoggedIn');
       document.getElementById('adminPanel').style.display = 'none';
       document.getElementById('adminLoginGate').style.display = 'flex';
-      initFingerprintGate();
+      document.body.classList.remove('admin-logged-in');
+      initGateFlow();
     }
 
     // Kept for backward compatibility since some legacy code paths reference it.
@@ -2990,11 +3283,43 @@
       }
     }
 
-    function switchAdminTab(tabId, btn) {
+    // Unified tab switcher: keeps the top pill tab bar, the bottom app-nav,
+    // and the "More" sheet all in sync no matter which one triggered the
+    // switch. tabId is the target section's element id; the optional btn is
+    // the element that was clicked (kept only so old call sites still work).
+    function goToAdminTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+
       document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
+      const topBtn = document.querySelector('.admin-tab[data-tab="' + tabId + '"]');
+      if (topBtn) {
+        topBtn.classList.add('active');
+        if (topBtn.scrollIntoView) topBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+
+      document.querySelectorAll('.bottom-app-nav-admin .bottom-nav-item').forEach(b => b.classList.remove('active'));
+      const bottomBtn = document.querySelector('.bottom-app-nav-admin .bottom-nav-item[data-tab="' + tabId + '"]');
+      if (bottomBtn) {
+        bottomBtn.classList.add('active');
+      } else {
+        // Sections reached via the "More" sheet aren't on the bottom bar
+        // directly, so highlight the More icon itself instead.
+        const moreBtn = document.querySelector('.bottom-app-nav-admin .bottom-nav-item[data-tab="more"]');
+        if (moreBtn) moreBtn.classList.add('active');
+      }
+    }
+
+    function openAdminMoreMenu() {
+      document.querySelectorAll('.bottom-app-nav-admin .bottom-nav-item').forEach(b => b.classList.remove('active'));
+      const moreBtn = document.querySelector('.bottom-app-nav-admin .bottom-nav-item[data-tab="more"]');
+      if (moreBtn) moreBtn.classList.add('active');
+      openModal('adminMoreModal');
+    }
+
+    function switchAdminTab(tabId, btn) {
+      goToAdminTab(tabId);
     }
 
     document.getElementById('addProductForm').addEventListener('submit', async (e) => {
@@ -3384,6 +3709,11 @@
 
     function renderNotificationsUI() {
       document.getElementById('notifCount').innerText = notifications.length;
+      const navBadge = document.getElementById('navAdminOrderBadge');
+      if (navBadge) {
+        navBadge.innerText = notifications.length;
+        navBadge.style.display = notifications.length > 0 ? 'flex' : 'none';
+      }
       const list = document.getElementById('notifPopupList');
       if(!list) return;
       list.innerHTML = '';
