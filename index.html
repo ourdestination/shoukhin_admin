@@ -301,11 +301,52 @@
     @media (max-width:600px) { .offer-admin-grid { grid-template-columns:1fr; } .offer-admin-full { grid-column:auto; } }
 
     .discount-badge {
-      position: absolute; top: 15px; left: -35px; transform: rotate(-45deg);
-      background: #e91e63; color: white; padding: 3px 35px; font-size: 10px;
-      font-weight: bold; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 10; text-align: center; white-space: nowrap;
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      width: 48px;
+      height: 21px;
+      padding: 0 4px;
+      background: #1976d2;
+      color: #fff;
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,0.98);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.30);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 800;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+      box-sizing: border-box;
+      letter-spacing: 0.1px;
     }
+    .discount-badge .discount-percent { display:inline-block; font-size:9px; line-height:1; white-space:nowrap; }
+    .discount-badge .discount-off { display:inline-block; font-size:9px; line-height:1; margin-left:3px; white-space:nowrap; }
+
+    /* Shoukhin Agent / Promo Code management */
+    .agent-admin-card {
+      background:#fff; border:1px solid #ead7ef; border-radius:12px; padding:14px;
+      box-shadow:0 3px 12px rgba(0,0,0,0.05); margin-bottom:14px;
+    }
+    .agent-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .agent-form-full { grid-column:1 / -1; }
+    .agent-profile-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin-top:12px; }
+    .agent-profile-card { background:#fff; border:1px solid #ead7ef; border-radius:14px; padding:14px; box-shadow:0 4px 14px rgba(0,0,0,0.06); }
+    .agent-profile-head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .agent-avatar { width:48px; height:48px; border-radius:50%; object-fit:cover; background:linear-gradient(45deg,var(--primary),var(--secondary)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; flex-shrink:0; }
+    .agent-name { font-weight:700; color:var(--dark); line-height:1.2; }
+    .agent-status { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; margin-top:3px; }
+    .agent-status.active { background:#e8f7ee; color:#1e8449; }
+    .agent-status.inactive { background:#fdecec; color:#c0392b; }
+    .agent-code { display:inline-block; background:#eaf2ff; color:#145da0; border:1px dashed #1976d2; border-radius:6px; padding:3px 7px; font-size:11px; font-weight:700; margin:2px 4px 2px 0; }
+    .agent-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:10px; }
+    .agent-stat { background:#faf7fb; border-radius:8px; padding:7px 5px; text-align:center; font-size:10px; color:#666; }
+    .agent-stat b { display:block; font-size:12px; color:var(--dark); margin-top:2px; }
+    @media (max-width:600px) { .agent-form-grid { grid-template-columns:1fr; } .agent-form-full { grid-column:auto; } }
 
     .product-batch-badge {
       position: absolute; top: 8px; right: 8px; z-index: 12;
@@ -651,6 +692,8 @@
         <button class="admin-tab" data-tab="oTab" onclick="switchAdminTab('oTab', this)">Orders</button>
         <button class="admin-tab" data-tab="offTab" onclick="switchAdminTab('offTab', this)">Offer Management</button>
         <button class="admin-tab" data-tab="couponTab" onclick="switchAdminTab('couponTab', this)">Coupon Management</button>
+        <button class="admin-tab" data-tab="agentTab" onclick="switchAdminTab('agentTab', this)">Shoukhin Agent</button>
+        <button class="admin-tab" data-tab="incomeTab" onclick="switchAdminTab('incomeTab', this)">Income</button>
         <button class="admin-tab" data-tab="cashTab" onclick="switchAdminTab('cashTab', this)">Cashbook</button>
         <button class="admin-tab" data-tab="uTab" onclick="switchAdminTab('uTab', this)">Customer Data</button>
         <button class="admin-tab" data-tab="sTab" onclick="switchAdminTab('sTab', this)">Website Settings</button>
@@ -666,7 +709,7 @@
           <input type="number" id="pBuyPrice" placeholder="Buying Price (BDT)" required>
           <input type="number" id="pPrice" placeholder="Regular Price (BDT)" required>
           <input type="number" id="pDiscountPrice" placeholder="Discount Price (BDT) (Optional)">
-          <input type="text" id="pDiscountTag" placeholder="Products Stock Discount Tag (e.g. 100৳ Discount)">
+          <input type="text" id="pDiscountTag" placeholder="Discount Tag is auto-calculated (e.g. 46% OFF)" readonly style="background:#f5f5f5; color:#777;">
           <input type="text" id="pColors" placeholder="Colors (Comma separated, e.g. Red, Blue)">
           <input type="text" id="pSizes" placeholder="Sizes (Comma separated, e.g. S, M, L, XL)">
           <input type="text" id="pOffer" placeholder="Offer Details (Optional, e.g. 10% OFF)">
@@ -828,7 +871,11 @@
               <label style="font-size:12px; font-weight:bold;">Min Order Amount (BDT) (Optional):</label>
               <input type="number" id="cMinOrder" placeholder="e.g. 500 (Optional)" min="0">
             </div>
-            <div style="grid-column: span 2;">
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Shoukhin Agent (Optional):</label>
+              <select id="cAgent"><option value="">-- General / No Agent --</option></select>
+            </div>
+            <div>
               <label style="font-size:12px; font-weight:bold;">Expiry Date & Time (Optional):</label>
               <input type="datetime-local" id="cExpiry">
             </div>
@@ -842,6 +889,7 @@
             <thead>
               <tr>
                 <th>Code</th>
+                <th>Agent</th>
                 <th>Discount</th>
                 <th>Min Order</th>
                 <th>Expiry</th>
@@ -854,6 +902,100 @@
             <tbody></tbody>
           </table>
         </div>
+      </div>
+
+
+      <!-- Shoukhin Agent Tab -->
+      <div id="agentTab" class="tab-content">
+        <h3><i class="fa-solid fa-user-tie"></i> Shoukhin Agent</h3>
+        <p style="font-size:12px; color:#777; margin:4px 0 14px;">Sales promotion agents, profiles and their assigned promo codes.</p>
+
+        <div class="agent-admin-card">
+          <h4 id="agentFormTitle">Add New Agent</h4>
+          <form id="agentForm" onsubmit="event.preventDefault(); saveAgent();" class="agent-form-grid" style="margin-top:10px;">
+            <input type="hidden" id="agentEditKey" value="">
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Agent Name:</label>
+              <input type="text" id="agentName" placeholder="Full name" required>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Phone:</label>
+              <input type="text" id="agentPhone" placeholder="01XXXXXXXXX">
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Agent ID:</label>
+              <input type="text" id="agentLoginId" placeholder="Agent ID (signup account)" readonly>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Payout Method:</label>
+              <select id="agentPayoutMethod"><option value="">-- Select --</option><option>bKash</option><option>Nagad</option><option>Rocket</option></select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Payout Number:</label>
+              <input type="text" id="agentPayoutNumber" placeholder="bKash / Nagad / Rocket">
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Commission Type:</label>
+              <select id="agentCommissionType"><option value="sale">Per Sale (%)</option><option value="profit">Per Profit (%)</option></select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Commission Rate (%):</label>
+              <input type="number" id="agentCommissionPercent" min="0" max="100" step="0.01" placeholder="e.g. 5">
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Assign Promo Code:</label>
+              <select id="agentCouponKey"><option value="">-- Select Coupon --</option></select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Status:</label>
+              <select id="agentStatus"><option value="pending">Pending</option><option value="active">Active</option><option value="locked">Locked</option></select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Profile Image URL (Optional):</label>
+              <input type="url" id="agentPhoto" placeholder="https://...">
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:bold;">Profile / Facebook Link (Optional):</label>
+              <input type="url" id="agentProfileLink" placeholder="https://...">
+            </div>
+            <div class="agent-form-full">
+              <label style="font-size:12px; font-weight:bold;">Note (Optional):</label>
+              <textarea id="agentNote" placeholder="Area, campaign or other notes" style="width:100%; min-height:62px; padding:8px; border:1px solid #ccc; border-radius:6px; resize:vertical;"></textarea>
+            </div>
+            <button type="submit" class="form-btn agent-form-full" style="background:var(--secondary);">Save Changes</button>
+            <button type="button" id="agentApproveBtn" class="form-btn agent-form-full" onclick="approveAgent()" style="display:none; background:#16834b;">Approve & Create Agent ID</button>
+            <button type="button" id="agentCancelBtn" class="form-btn agent-form-full" onclick="resetAgentForm()" style="display:none; background:#6c757d;">Cancel Edit</button>
+          </form>
+        </div>
+
+        <h4>Agent Profiles</h4>
+        <div id="agentProfileGrid" class="agent-profile-grid"></div>
+      </div>
+
+      <!-- Income Tab -->
+      <div id="incomeTab" class="tab-content">
+        <h3><i class="fa-solid fa-chart-line"></i> Income</h3>
+        <div class="agent-admin-card" style="margin:12px 0 14px;">
+          <h4><i class="fa-solid fa-money-bill-transfer"></i> Agent Commission Payout</h4>
+          <div class="agent-form-grid">
+            <div><label style="font-size:12px;font-weight:bold;">Agent ID:</label><select id="payoutAgentSelect" onchange="updatePayoutDue()"><option value="">-- Select Agent --</option></select></div>
+            <div><label style="font-size:12px;font-weight:bold;">Total Pay Amount (BDT):</label><input type="number" id="payoutTotalPayAmount" readonly style="background:#f1f1f1;"></div>
+            <div><label style="font-size:12px;font-weight:bold;">Claim Pay Amount (BDT):</label><input type="number" id="payoutAmount" min="0.01" step="0.01" placeholder="Claim amount"></div>
+            <div><label style="font-size:12px;font-weight:bold;">Payout Method:</label><select id="payoutMethod"><option>bKash</option><option>Nagad</option><option>Rocket</option></select></div>
+            <div><label style="font-size:12px;font-weight:bold;">Transaction ID:</label><input type="text" id="payoutTxnId" placeholder="e.g. TXN123456"></div>
+            <div><label style="font-size:12px;font-weight:bold;">Note:</label><input type="text" id="payoutNote" placeholder="Optional note"></div>
+            <button type="button" class="form-btn agent-form-full" onclick="recordAgentPayout()" style="background:#16834b;">Record Payout</button>
+          </div>
+          <div id="payoutMsg" style="font-size:12px;margin-top:8px;"></div>
+        </div>
+        <div class="summary-box">
+          <div class="card-box bg-sell"><h4>Total Sales Income</h4><h2 id="incomeSalesVal">0 ৳</h2></div>
+          <div class="card-box bg-expense"><h4>Agent Commission Paid</h4><h2 id="incomeAgentPayoutVal">0 ৳</h2></div>
+          <div class="card-box bg-expense"><h4>Other Expenses</h4><h2 id="incomeOtherExpenseVal">0 ৳</h2></div>
+          <div class="card-box bg-profit"><h4>Net Income</h4><h2 id="incomeNetVal">0 ৳</h2></div>
+        </div>
+        <h4>Agent Payout History</h4>
+        <div style="overflow-x:auto;"><table id="agentPayoutTable"><thead><tr><th>Date</th><th>Agent</th><th>Method</th><th>Amount</th><th>Transaction ID</th><th>Note</th><th>Action</th></tr></thead><tbody></tbody></table></div>
       </div>
 
       <!-- Cashbook Tab -->
@@ -1048,6 +1190,7 @@
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('cTab');"><i class="fa-solid fa-layer-group"></i> Categories</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('offTab');"><i class="fa-solid fa-fire"></i> Offer Management</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('couponTab');"><i class="fa-solid fa-tags"></i> Coupon Management</button>
+        <button onclick="closeModal('adminMoreModal'); goToAdminTab('agentTab');"><i class="fa-solid fa-user-tie"></i> Shoukhin Agent</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('sTab');"><i class="fa-solid fa-gear"></i> Website Settings</button>
       </div>
     </div>
@@ -1271,7 +1414,7 @@
       <label style="font-size:12px; font-weight:bold;">Discount Price (BDT):</label>
       <input type="number" id="editPDiscountPrice" placeholder="Optional">
       <label style="font-size:12px; font-weight:bold;">Products Stock Discount Tag:</label>
-      <input type="text" id="editPDiscountTag" placeholder="e.g. 100৳ Discount">
+      <input type="text" id="editPDiscountTag" placeholder="Auto-calculated from Regular/Discount Price" readonly style="background:#f5f5f5; color:#777;">
       <label style="font-size:12px; font-weight:bold;">Colors (Comma separated):</label>
       <input type="text" id="editPColors">
       <label style="font-size:12px; font-weight:bold;">Sizes (Comma separated):</label>
@@ -1470,7 +1613,9 @@
     let customerDataHistory = {}; 
     let notifications = [];
     let expenses = [];
+    let agentPayouts = [];
     let coupons = [];
+    let agents = [];
     let appliedCoupon = null;
     let couponDiscount = 0;
     let adminPassword = "01518411872";
@@ -1865,6 +2010,16 @@
           const data = snapshot.val();
           coupons = data ? Object.values(data) : [];
           renderCouponTable();
+          renderAgentProfiles();
+          populateAgentSelectors();
+        });
+
+        window.onValue(window.ref(window.db, 'agents'), (snapshot) => {
+          const data = snapshot.val();
+          agents = data ? Object.entries(data).map(([key, value]) => ({ ...value, _key: key })) : [];
+          renderAgentProfiles();
+          renderCouponTable();
+          populateAgentSelectors();
         });
 
         window.onValue(window.ref(window.db, 'special_offer_settings'), (snapshot) => {
@@ -1888,6 +2043,15 @@
           expenses = data ? Object.values(data) : [];
           renderExpenses();
           renderCashbook();
+        });
+
+        window.onValue(window.ref(window.db, 'agentPayouts'), (snapshot) => {
+          const data = snapshot.val();
+          agentPayouts = data ? Object.values(data) : [];
+          renderAgentPayouts();
+          renderIncome();
+          renderCashbook();
+          renderAgentProfiles();
         });
 
         window.onValue(window.ref(window.db, 'settings'), (snapshot) => {
@@ -2208,8 +2372,8 @@
 
       let discountTagHtml = '';
       if (!isSpecialOffer && hasDiscount) {
-        const discountAmount = p.price - p.discountPrice;
-        discountTagHtml = `<div class="discount-badge">${escapeHtml(p.discountTag || `${discountAmount}৳ Discount`)}</div>`;
+        const discountPercent = Math.max(1, Math.round(((Number(p.price) - Number(p.discountPrice)) / Number(p.price)) * 100));
+        discountTagHtml = `<div class="discount-badge" title="${discountPercent}% OFF"><span class="discount-percent">${discountPercent}%</span><span class="discount-off">OFF</span></div>`;
       }
       if (isSpecialOffer && p.offerDiscountTag) {
         discountTagHtml = `<div class="offer-discount-badge">${escapeHtml(p.offerDiscountTag)}</div>`;
@@ -2896,6 +3060,10 @@
         items: cart,
         subtotal: subtotal,
         couponCode: appliedCoupon ? appliedCoupon.code : 'N/A',
+        agentId: appliedCoupon && appliedCoupon.agentId ? appliedCoupon.agentId : null,
+        agentCommissionStatus: appliedCoupon && appliedCoupon.agentId ? 'pending' : 'none',
+        agentCommissionPending: 0,
+        agentCommissionEarned: 0,
         couponDiscount: couponDiscount,
         deliveryCharge: deliveryCharge,
         total: grandTotal,
@@ -3354,6 +3522,8 @@
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       const target = document.getElementById(tabId);
       if (target) target.classList.add('active');
+      if (tabId === 'agentTab') { renderAgentProfiles(); populateAgentSelectors(); }
+      if (tabId === 'incomeTab') { renderIncome(); renderAgentPayouts(); }
 
       document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
       const topBtn = document.querySelector('.admin-tab[data-tab="' + tabId + '"]');
@@ -3755,7 +3925,11 @@
     function changeOrderStatus(orderId, status) {
       const order = orders.find(o => o.id === orderId);
       const previousStatus = order ? order.status : null;
-      window.update(window.ref(window.db, 'orders/' + orderId), { status });
+      const commissionAgent = order && order.agentId ? agents.find(a => a.id === order.agentId) : null;
+      const commissionBase = order && commissionAgent ? getOrderCommissionBase(order, commissionAgent) : 0;
+      const commissionAmount = commissionAgent ? commissionBase * (Number(commissionAgent.commissionPercent)||0) / 100 : 0;
+      const commissionPatch = order && order.agentId ? { agentCommissionType: commissionAgent.commissionType || 'sale', agentCommissionRate: Number(commissionAgent.commissionPercent)||0, agentCommissionPending: status === 'Confirm' ? commissionAmount : 0, agentCommissionEarned: status === 'Completed' ? commissionAmount : 0 } : {};
+      window.update(window.ref(window.db, 'orders/' + orderId), { status, ...commissionPatch });
 
       // Cancelling an order returns its items to stock; un-cancelling deducts them again.
       if (order && status === 'Cancelled' && previousStatus !== 'Cancelled') {
@@ -3776,6 +3950,7 @@
         hist.totalSpent = allUserOrders.filter(o => o.status === 'Completed').reduce((sum, o) => sum + o.total, 0);
 
         window.set(historyRef, hist);
+        renderAgentProfiles(); renderIncome(); updatePayoutDue();
       }
     }
 
@@ -3835,6 +4010,8 @@
       const value = Number(document.getElementById('cValue').value) || 0;
       const minOrder = Number(document.getElementById('cMinOrder').value) || 0;
       const expiry = document.getElementById('cExpiry').value;
+      const agentId = document.getElementById('cAgent') ? document.getElementById('cAgent').value : '';
+      const selectedAgent = agents.find(a => a.id === agentId);
 
       if(!code) return alert("Coupon code required!");
       if(value <= 0) return alert("Discount value must be greater than 0!");
@@ -3849,6 +4026,8 @@
         value: value,
         minOrder: minOrder,
         expiry: expiry,
+        agentId: agentId || null,
+        agentName: selectedAgent ? selectedAgent.name : '',
         usedCount: existing.usedCount || 0,
         totalSales: existing.totalSales || 0,
         totalDiscountGiven: existing.totalDiscountGiven || 0,
@@ -3869,6 +4048,7 @@
       document.getElementById('cValue').value = '';
       document.getElementById('cMinOrder').value = '';
       document.getElementById('cExpiry').value = '';
+      if(document.getElementById('cAgent')) document.getElementById('cAgent').value = '';
       document.getElementById('couponFormTitle').innerText = 'Add New Coupon';
     }
 
@@ -3882,6 +4062,7 @@
       document.getElementById('cValue').value = c.value;
       document.getElementById('cMinOrder').value = c.minOrder || '';
       document.getElementById('cExpiry').value = c.expiry || '';
+      if(document.getElementById('cAgent')) document.getElementById('cAgent').value = c.agentId || '';
       document.getElementById('couponFormTitle').innerText = 'Edit Coupon: ' + c.code;
     }
 
@@ -3899,7 +4080,7 @@
       tbody.innerHTML = '';
 
       if(coupons.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#888;">No coupons created yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:#888;">No coupons created yet.</td></tr>';
         return;
       }
 
@@ -3911,6 +4092,7 @@
         tbody.innerHTML += `
           <tr>
             <td><b style="color:var(--primary);">${c.code}</b></td>
+            <td>${c.agentId ? `<span style="font-weight:600;">${escapeHtml(c.agentName || (agents.find(a => a.id === c.agentId)?.name || 'Agent'))}</span>` : '<span style="color:#999;">General</span>'}</td>
             <td>${discountText}</td>
             <td>${minOrderText}</td>
             <td>${expiryText}</td>
@@ -3924,6 +4106,219 @@
           </tr>
         `;
       });
+    }
+
+
+    /* ================= Shoukhin Agent Management ================= */
+    function escapeAttr(value) {
+      return escapeHtml(String(value || '')).replace(/`/g, '&#96;');
+    }
+
+    function populateAgentSelectors() {
+      const couponSelect = document.getElementById('agentCouponKey');
+      if (couponSelect) {
+        const current = couponSelect.value;
+        couponSelect.innerHTML = '<option value="">-- Select Coupon --</option>' + coupons.map(c => `<option value="${escapeAttr(c.key)}">${escapeHtml(c.code)}</option>`).join('');
+        if (current && coupons.some(c => c.key === current)) couponSelect.value = current;
+      }
+
+      const agentSelect = document.getElementById('cAgent');
+      if (agentSelect) {
+        const current = agentSelect.value;
+        const approvedAgents = agents.filter(a => a.approved === true || (a.id && a.status !== 'pending'));
+        agentSelect.innerHTML = '<option value="">-- General / No Agent --</option>' + approvedAgents.map(a => `<option value="${escapeAttr(a.id)}">${escapeHtml(a.name)}${a.phone ? ' - ' + escapeHtml(a.phone) : ''}</option>`).join('');
+        if (current && approvedAgents.some(a => a.id === current)) agentSelect.value = current;
+      }
+
+      const payoutSelect = document.getElementById('payoutAgentSelect');
+      if (payoutSelect) {
+        const current = payoutSelect.value;
+        const approvedAgents = agents.filter(a => a.id && a.status !== 'pending');
+        payoutSelect.innerHTML = '<option value="">-- Select Agent --</option>' + approvedAgents.map(a => `<option value="${escapeAttr(a.id)}">${escapeHtml(a.name)} - ${escapeHtml(a.id)}</option>`).join('');
+        if (current && approvedAgents.some(a => a.id === current)) payoutSelect.value = current;
+      }
+    }
+
+    function getAgentByRef(refValue) {
+      return agents.find(a => a._key === refValue || a.id === refValue || a.loginId === refValue);
+    }
+
+    function getAgentDbKey(a) {
+      return (a && (a._key || a.uid || a.id)) || '';
+    }
+
+    function generateAgentId() {
+      let maxNo = 0;
+      agents.forEach(a => {
+        const m = String(a.loginId || a.id || '').toUpperCase().match(/^SA(\d+)$/);
+        if (m) maxNo = Math.max(maxNo, Number(m[1]) || 0);
+      });
+      return 'SA' + String(maxNo + 1).padStart(4, '0');
+    }
+
+    function saveAgent() {
+      const editKey = document.getElementById('agentEditKey').value;
+      const name = document.getElementById('agentName').value.trim();
+      const phone = document.getElementById('agentPhone').value.trim();
+      const couponKey = document.getElementById('agentCouponKey').value;
+      let status = document.getElementById('agentStatus').value || 'pending';
+      const photo = document.getElementById('agentPhoto').value.trim();
+      const profileLink = document.getElementById('agentProfileLink').value.trim();
+      const note = document.getElementById('agentNote').value.trim();
+      const payoutMethod = document.getElementById('agentPayoutMethod').value || '';
+      const payoutNumber = document.getElementById('agentPayoutNumber').value.trim();
+      const commissionPercent = Math.max(0, Math.min(100, Number(document.getElementById('agentCommissionPercent').value) || 0));
+      const commissionType = document.getElementById('agentCommissionType').value || 'sale';
+      if (!name) return alert('Agent name required!');
+
+      const existing = getAgentByRef(editKey) || {};
+      const dbKey = editKey ? getAgentDbKey(existing) : ('MANUAL-' + Date.now());
+      const id = existing.id || '';
+      const loginId = existing.loginId || id || '';
+      if (!id && status !== 'pending') status = 'pending';
+      const data = { ...existing, name, phone, status, photo, profileLink, note, payoutMethod, payoutNumber, commissionPercent, commissionType, id, loginId, approved: !!id && status !== 'pending', createdAt: existing.createdAt || Date.now(), updatedAt: Date.now() };
+      delete data._key;
+      if (!window.db) return;
+
+      window.set(window.ref(window.db, 'agents/' + dbKey), data);
+      if (id) {
+        coupons.filter(c => c.agentId === id).forEach(c => {
+          window.update(window.ref(window.db, 'coupons/' + c.key), { agentName: name });
+        });
+        if (couponKey) window.update(window.ref(window.db, 'coupons/' + couponKey), { agentId: id, agentName: name });
+      }
+      alert(id ? 'Agent updated successfully!' : 'Pending application saved. Approve it to create an Agent ID.');
+      resetAgentForm();
+    }
+
+    function editAgent(refValue) {
+      const a = getAgentByRef(refValue);
+      if (!a) return;
+      document.getElementById('agentEditKey').value = getAgentDbKey(a);
+      document.getElementById('agentName').value = a.name || '';
+      document.getElementById('agentPhone').value = a.phone || '';
+      document.getElementById('agentLoginId').value = a.loginId || a.id || 'Not created yet';
+      document.getElementById('agentPayoutMethod').value = a.payoutMethod || '';
+      document.getElementById('agentPayoutNumber').value = a.payoutNumber || '';
+      document.getElementById('agentCommissionPercent').value = a.commissionPercent ?? '';
+      document.getElementById('agentCommissionType').value = a.commissionType || 'sale';
+      document.getElementById('agentStatus').value = a.status || (a.id ? 'active' : 'pending');
+      document.getElementById('agentPhoto').value = a.photo || '';
+      document.getElementById('agentProfileLink').value = a.profileLink || '';
+      document.getElementById('agentNote').value = a.note || '';
+      const linked = coupons.find(c => c.agentId === a.id);
+      document.getElementById('agentCouponKey').value = linked ? linked.key : '';
+      document.getElementById('agentFormTitle').innerText = (a.id ? 'Edit Agent: ' : 'Review Application: ') + (a.name || '');
+      document.getElementById('agentCancelBtn').style.display = 'block';
+      const approveBtn = document.getElementById('agentApproveBtn');
+      if (approveBtn) approveBtn.style.display = a.id ? 'none' : 'block';
+      if (typeof goToAdminTab === 'function') goToAdminTab('agentTab');
+      document.getElementById('agentFormTitle').scrollIntoView({behavior:'smooth', block:'center'});
+    }
+
+    function approveAgent() {
+      const editKey = document.getElementById('agentEditKey').value;
+      const a = getAgentByRef(editKey);
+      if (!a) return alert('Select a pending agent application first.');
+      if (a.id) return alert('This agent is already approved.');
+      const commissionPercent = Number(document.getElementById('agentCommissionPercent').value);
+      const commissionType = document.getElementById('agentCommissionType').value || 'sale';
+      if (!Number.isFinite(commissionPercent) || commissionPercent <= 0 || commissionPercent > 100) return alert('Enter a valid commission % (more than 0 and up to 100) before approval.');
+      const newId = generateAgentId();
+      const dbKey = getAgentDbKey(a);
+      const couponKey = document.getElementById('agentCouponKey').value;
+      const name = document.getElementById('agentName').value.trim() || a.name || '';
+      const data = {
+        id: newId, loginId: newId, approved: true, status: 'active', commissionPercent, commissionType,
+        name, phone: document.getElementById('agentPhone').value.trim(),
+        payoutMethod: document.getElementById('agentPayoutMethod').value || '',
+        payoutNumber: document.getElementById('agentPayoutNumber').value.trim(),
+        photo: document.getElementById('agentPhoto').value.trim(), profileLink: document.getElementById('agentProfileLink').value.trim(),
+        note: document.getElementById('agentNote').value.trim(), approvedAt: Date.now(), updatedAt: Date.now()
+      };
+      window.update(window.ref(window.db, 'agents/' + dbKey), data);
+      if (couponKey) window.update(window.ref(window.db, 'coupons/' + couponKey), { agentId: newId, agentName: name });
+      alert('Approved! New Agent ID: ' + newId);
+      resetAgentForm();
+    }
+
+    function toggleAgentLock(refValue) {
+      const a = getAgentByRef(refValue);
+      if (!a || !a.id) return;
+      const locked = a.status === 'locked' || a.status === 'inactive';
+      const next = locked ? 'active' : 'locked';
+      const action = locked ? 'unlock' : 'lock';
+      if (!confirm('Are you sure you want to ' + action + ' ' + (a.name || a.id) + '?')) return;
+      window.update(window.ref(window.db, 'agents/' + getAgentDbKey(a)), { status: next, updatedAt: Date.now() });
+    }
+
+    function resetAgentForm() {
+      const f = document.getElementById('agentForm');
+      if (f) f.reset();
+      const key = document.getElementById('agentEditKey');
+      if (key) key.value = '';
+      const title = document.getElementById('agentFormTitle');
+      if (title) title.innerText = 'Add / Review Agent';
+      const btn = document.getElementById('agentCancelBtn');
+      if (btn) btn.style.display = 'none';
+      const approveBtn = document.getElementById('agentApproveBtn');
+      if (approveBtn) approveBtn.style.display = 'none';
+      const idField = document.getElementById('agentLoginId');
+      if (idField) idField.value = '';
+      populateAgentSelectors();
+    }
+
+    function deleteAgent(refValue) {
+      const a = getAgentByRef(refValue);
+      if (!a) return;
+      if (!confirm('Delete agent ' + (a.name || a.id || 'application') + '? This will remove portal access/profile data.')) return;
+      const pw = prompt('Enter Admin Password to delete this agent:');
+      if (pw === null) return;
+      if (pw !== adminPassword) return alert('Incorrect admin password. Agent was not deleted.');
+      if (!window.db) return;
+      if (a.id) coupons.filter(c => c.agentId === a.id).forEach(c => window.update(window.ref(window.db, 'coupons/' + c.key), { agentId: null, agentName: null }));
+      window.remove(window.ref(window.db, 'agents/' + getAgentDbKey(a)));
+      alert('Agent deleted.');
+    }
+
+    function renderAgentProfiles() {
+      const grid = document.getElementById('agentProfileGrid');
+      if (!grid) return;
+      populateAgentSelectors();
+      if (!agents.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:22px; background:#fff; border-radius:12px;">No Shoukhin Agent applications yet.</div>';
+        return;
+      }
+      const sorted = [...agents].sort((a,b) => ((a.id ? 1 : 0) - (b.id ? 1 : 0)) || ((b.createdAt||0)-(a.createdAt||0)));
+      grid.innerHTML = sorted.map(a => {
+        const linkedCoupons = a.id ? coupons.filter(c => c.agentId === a.id) : [];
+        const uses = linkedCoupons.reduce((s,c) => s + (Number(c.usedCount)||0), 0);
+        const sales = linkedCoupons.reduce((s,c) => s + (Number(c.totalSales)||0), 0);
+        const commissionRate = Number(a.commissionPercent) || 0;
+        const commissionType = a.commissionType || 'sale';
+        const agentOrders = orders.filter(o => o.agentId === a.id && o.couponCode && o.couponCode !== 'N/A');
+        const commissionEarned = agentOrders.filter(o => o.status === 'Completed').reduce((sum,o) => sum + getOrderCommissionBase(o, a) * commissionRate / 100, 0);
+        const commissionPending = agentOrders.filter(o => o.status === 'Confirm').reduce((sum,o) => sum + getOrderCommissionBase(o, a) * commissionRate / 100, 0);
+        const paid = a.id ? agentPayouts.filter(x => x.agentId === a.id).reduce((sum,x) => sum + (Number(x.amount)||0), 0) : 0;
+        const due = Math.max(0, commissionEarned - paid);
+        const initials = (a.name || 'A').split(/\s+/).filter(Boolean).slice(0,2).map(x => x[0]).join('').toUpperCase();
+        const avatar = a.photo ? `<img class="agent-avatar" src="${escapeAttr(a.photo)}" alt="${escapeAttr(a.name)}">` : `<div class="agent-avatar">${escapeHtml(initials)}</div>`;
+        const codes = linkedCoupons.length ? linkedCoupons.map(c => `<span class="agent-code">${escapeHtml(c.code)}</span>`).join('') : '<span style="font-size:11px;color:#999;">No promo code assigned</span>';
+        const link = a.profileLink ? `<a href="${escapeAttr(a.profileLink)}" target="_blank" rel="noopener" style="font-size:11px;">Open Profile</a>` : '';
+        const isPending = !a.id || a.status === 'pending' || a.approved === false;
+        const isLocked = a.status === 'locked' || a.status === 'inactive';
+        const statusText = isPending ? 'Pending Approval' : (isLocked ? 'Locked' : 'Active');
+        const statusClass = (isPending || isLocked) ? 'inactive' : 'active';
+        const refValue = getAgentDbKey(a);
+        return `<div class="agent-profile-card">
+          <div class="agent-profile-head">${avatar}<div><div class="agent-name">${escapeHtml(a.name || '')}</div><span class="agent-status ${statusClass}">${statusText}</span></div></div>
+          <div style="font-size:12px; line-height:1.7;"><i class="fa-solid fa-phone"></i> ${escapeHtml(a.phone || 'No phone')}<br><i class="fa-solid fa-id-card"></i> ID: ${isPending ? '<b style="color:#e67e22;">Not created yet</b>' : escapeHtml(a.loginId || a.id || '—')}<br><i class="fa-solid fa-wallet"></i> ${escapeHtml(a.payoutMethod || '—')}: ${escapeHtml(a.payoutNumber || '—')} ${link ? '<br>' + link : ''}</div>
+          <div style="margin-top:7px;">${codes}</div>
+          ${a.note ? `<div style="font-size:11px;color:#777;margin-top:7px;">${escapeHtml(a.note)}</div>` : ''}
+          <div class="agent-stats"><div class="agent-stat">Commission<b>${commissionType === 'profit' ? 'Profit' : 'Sale'} ${commissionRate}%</b></div><div class="agent-stat">Earned<b>${commissionEarned.toFixed(2)}৳</b></div><div class="agent-stat">Due<b>${due.toFixed(2)}৳</b></div></div><div style="font-size:11px;color:#666;margin-top:6px;">Sales: ${sales}৳ • Pending: ${commissionPending.toFixed(2)}৳ • Paid: ${paid.toFixed(2)}৳ • Uses: ${uses}</div>
+          <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;"><button onclick="editAgent('${escapeAttr(refValue)}')" style="flex:1;min-width:70px;background:#007bff;color:#fff;border:0;padding:6px;border-radius:5px;cursor:pointer;">${isPending ? 'Review' : 'Edit'}</button>${!isPending ? `<button onclick="toggleAgentLock('${escapeAttr(refValue)}')" style="flex:1;min-width:70px;background:${isLocked ? '#16834b' : '#e67e22'};color:#fff;border:0;padding:6px;border-radius:5px;cursor:pointer;">${isLocked ? 'Unlock' : 'Lock'}</button>` : ''}<button onclick="deleteAgent('${escapeAttr(refValue)}')" style="flex:1;min-width:70px;background:#dc3545;color:#fff;border:0;padding:6px;border-radius:5px;cursor:pointer;">Delete</button></div>
+        </div>`;
+      }).join('');
     }
 
     function populateOfferSelect() {
@@ -4268,6 +4663,89 @@
       }
     });
 
+    function getOrderCommissionBase(o, agent) {
+      if (!o) return 0;
+      if ((agent?.commissionType || o.agentCommissionType || 'sale') === 'profit') {
+        let cost = 0;
+        (o.items || []).forEach(item => {
+          const prod = products.find(p => p.id === item.id);
+          if (prod) cost += (Number(prod.buyPrice)||0) * (Number(item.qty)||0);
+        });
+        return Math.max(0, (Number(o.subtotal)||0) - (Number(o.couponDiscount)||0) - cost);
+      }
+      return Math.max(0, Number(o.total)||0 - (Number(o.deliveryCharge)||0));
+    }
+
+    function getAgentCommissionSummary(agentId) {
+      const a = agents.find(x => x.id === agentId);
+      if (!a) return {pending:0, earned:0, paid:0, due:0};
+      const rate = Number(a.commissionPercent)||0;
+      let pending=0, earned=0;
+      orders.filter(o => o.agentId === agentId && o.couponCode && o.couponCode !== 'N/A').forEach(o => {
+        const v=getOrderCommissionBase(o,a)*rate/100;
+        if(o.status==='Confirm') pending += v;
+        if(o.status==='Completed') earned += v;
+      });
+      const paid=agentPayouts.filter(x=>x.agentId===agentId).reduce((s,x)=>s+(Number(x.amount)||0),0);
+      return {pending,earned,paid,due:Math.max(0,earned-paid)};
+    }
+
+    function updatePayoutDue() {
+      const id=document.getElementById('payoutAgentSelect')?.value||'';
+      const sum=getAgentCommissionSummary(id);
+      const total=document.getElementById('payoutTotalPayAmount');
+      const claim=document.getElementById('payoutAmount');
+      if(total) total.value=sum.due.toFixed(2);
+      if(claim){claim.max=sum.due.toFixed(2); claim.value='';}
+      const agent=agents.find(a=>a.id===id);
+      if(agent && document.getElementById('payoutMethod')) document.getElementById('payoutMethod').value=agent.payoutMethod||'bKash';
+    }
+
+    function recordAgentPayout() {
+      const agentId = document.getElementById('payoutAgentSelect')?.value || '';
+      const method = document.getElementById('payoutMethod')?.value || '';
+      const totalPay = getAgentCommissionSummary(agentId).due;
+      const amount = Number(document.getElementById('payoutAmount')?.value) || 0;
+      const txnId = document.getElementById('payoutTxnId')?.value.trim() || '';
+      const note = document.getElementById('payoutNote')?.value.trim() || '';
+      const agent = agents.find(a => a.id === agentId);
+      if (!agent) return alert('Please select an agent!');
+      if (amount <= 0 || amount > totalPay + 0.0001) return alert('Claim Pay Amount must be greater than 0 and not exceed Total Pay Amount.');
+      if (!txnId) return alert('Transaction ID is required!');
+      const id='AGP-'+Date.now();
+      const data={id,agentId,agentName:agent.name||'',payoutMethod:method,payoutNumber:agent.payoutNumber||'',amount,transactionId:txnId,note,date:new Date().toISOString(),createdAt:Date.now()};
+      window.set(window.ref(window.db,'agentPayouts/'+id),data);
+      document.getElementById('payoutAmount').value='';document.getElementById('payoutTxnId').value='';document.getElementById('payoutNote').value='';
+      updatePayoutDue(); renderAgentPayouts(); renderAgentProfiles(); renderIncome();
+      const m=document.getElementById('payoutMsg');if(m){m.style.color='#16834b';m.textContent='Payout recorded successfully.';}
+    }
+
+    function deleteAgentPayout(id) {
+      const pass=prompt('Enter Admin Password to delete this payout:');
+      if(pass===null)return;
+      if(pass!==adminPassword)return alert('Incorrect admin password.');
+      if(!confirm('Delete this payout history? The paid amount will be added back to agent due.'))return;
+      window.remove(window.ref(window.db,'agentPayouts/'+id));
+    }
+
+    function renderAgentPayouts() {
+      const tbody=document.querySelector('#agentPayoutTable tbody');if(!tbody)return;tbody.innerHTML='';
+      if(!agentPayouts.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#888;">No agent payout recorded yet.</td></tr>';return;}
+      [...agentPayouts].sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0)).forEach(x=>{
+        tbody.innerHTML += `<tr><td>${x.date?new Date(x.date).toLocaleString():'—'}</td><td>${escapeHtml(x.agentName||'—')}<br><small>${escapeHtml(x.agentId||'')}</small></td><td>${escapeHtml(x.payoutMethod||'—')}<br><small>${escapeHtml(x.payoutNumber||'')}</small></td><td><b>${Number(x.amount||0).toFixed(2)}৳</b></td><td>${escapeHtml(x.transactionId||'—')}</td><td>${escapeHtml(x.note||'')}</td><td><button onclick="deleteAgentPayout('${escapeAttr(x.id)}')" style="background:#dc3545;color:#fff;border:0;padding:4px 7px;border-radius:4px;cursor:pointer;">Delete</button></td></tr>`;
+      });
+    }
+
+    function renderIncome() {
+      let sales=0, other=0, paid=0;
+      orders.forEach(o=>{ if(o.status==='Completed') sales += Number(o.total)||0; });
+      expenses.forEach(e=>{ other += Number(e.amount)||0; });
+      agentPayouts.forEach(x=>{ paid += Number(x.amount)||0; });
+      const net=sales-other-paid;
+      const setv=(id,v)=>{const el=document.getElementById(id);if(el)el.innerText=v.toFixed(2)+' ৳';};
+      setv('incomeSalesVal',sales); setv('incomeAgentPayoutVal',paid); setv('incomeOtherExpenseVal',other); setv('incomeNetVal',net);
+    }
+
     function renderCashbook() {
       let totalBuy = 0;
       let totalSell = 0;
@@ -4285,6 +4763,9 @@
 
       expenses.forEach(e => {
         totalExp += (e.amount || 0);
+      });
+      agentPayouts.forEach(e => {
+        totalExp += (Number(e.amount) || 0);
       });
 
       const profit = totalSell - totalExp;
@@ -4360,7 +4841,7 @@
               <td><span style="color:red; font-weight:bold;">${c.cancelled || 0}</span></td>
               <td><b>${c.totalSpent || 0}</b>৳</td>
               <td>
-                <button onclick="showCustomerHistory('${phone}')" style="background:var(--primary); color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">Profile</button>
+                <button onclick="showCustomerHistory('${phone}')" style="background:var(--primary); color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">Profile</button> <button onclick="deleteCustomerProfile('${phone}')" style="background:#dc3545; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">Delete</button>
               </td>
             </tr>
           `;
@@ -4368,6 +4849,22 @@
       });
     }
 
+
+    async function deleteCustomerProfile(phone) {
+      if (!phone) return;
+      if (!confirm('Delete this customer profile? Customer order history will not be deleted.')) return;
+      const pw = prompt('Enter Admin Password to delete this customer profile:');
+      if (pw === null) return;
+      if (pw !== adminPassword) return alert('Incorrect admin password. Customer profile was not deleted.');
+      try {
+        await window.remove(window.ref(window.db, 'customer_history/' + phone));
+        delete customerDataHistory[phone];
+        renderCustomerData();
+        alert('Customer profile deleted.');
+      } catch (err) {
+        alert('Could not delete customer profile: ' + (err.message || err));
+      }
+    }
     function updateDeliverySettings() {
       const faridpur = Number(document.getElementById('chargeFaridpur').value) || 60;
       const outside = Number(document.getElementById('chargeOutside').value) || 120;
