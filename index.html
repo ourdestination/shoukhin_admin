@@ -307,6 +307,28 @@
       z-index: 10; text-align: center; white-space: nowrap;
     }
 
+    .product-batch-badge {
+      position: absolute; top: 8px; right: 8px; z-index: 12;
+      padding: 3px 11px; border-radius: 20px; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.4px; color: #fff; white-space: nowrap;
+    }
+    .product-batch-badge.badge-new {
+      background: #2196f3;
+      animation: batchBadgeGlowBlue 1.3s ease-in-out infinite;
+    }
+    .product-batch-badge.badge-hot {
+      background: #ff5722;
+      animation: batchBadgeGlowOrange 1.1s ease-in-out infinite;
+    }
+    @keyframes batchBadgeGlowBlue {
+      0%, 100% { box-shadow: 0 0 4px #2196f3, 0 0 8px #2196f3; opacity: 1; }
+      50% { box-shadow: 0 0 14px #2196f3, 0 0 26px #2196f3; opacity: 0.6; }
+    }
+    @keyframes batchBadgeGlowOrange {
+      0%, 100% { box-shadow: 0 0 4px #ff5722, 0 0 8px #ff5722; opacity: 1; }
+      50% { box-shadow: 0 0 14px #ff5722, 0 0 26px #ff5722; opacity: 0.6; }
+    }
+
     .price { font-weight: bold; color: var(--primary); font-size: 1.05rem; margin: 4px 0; }
     .old-price { text-decoration: line-through; color: #888; font-size: 0.8rem; margin-right: 4px; }
 
@@ -651,6 +673,11 @@
           <input type="text" id="pOffer" placeholder="Offer Details (Optional, e.g. 10% OFF)">
           <input type="number" id="pStock" placeholder="Total Stock Quantity" required>
           <input type="text" id="pWarranty" placeholder="Guarantee/Warranty (Optional, e.g. 7 Days Warranty)">
+          <select id="pBadge" title="Batch Tag (auto removes after 7 days)">
+            <option value="">-- No Batch Tag --</option>
+            <option value="New">New (Blinking)</option>
+            <option value="Hot Batch">Hot Batch (Blinking)</option>
+          </select>
           <textarea id="pDescription" placeholder="Product Description (Optional)" style="grid-column: span 2; min-height: 70px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif; resize: vertical;"></textarea>
 
           <div style="grid-column: span 2;">
@@ -1256,6 +1283,12 @@
       <input type="number" id="editPStock" required>
       <label style="font-size:12px; font-weight:bold;">Guarantee/Warranty:</label>
       <input type="text" id="editPWarranty" placeholder="e.g. 7 Days Warranty">
+      <label style="font-size:12px; font-weight:bold;">Batch Tag (auto removes after 7 days from when set):</label>
+      <select id="editPBadge">
+        <option value="">-- No Batch Tag --</option>
+        <option value="New">New (Blinking)</option>
+        <option value="Hot Batch">Hot Batch (Blinking)</option>
+      </select>
       <label style="font-size:12px; font-weight:bold;">Product Description:</label>
       <textarea id="editPDescription" placeholder="Optional" style="width:100%; min-height:70px; padding:8px; border-radius:6px; border:1px solid #ccc; font-family:'Poppins', sans-serif; resize:vertical;"></textarea>
 
@@ -1788,6 +1821,7 @@
           renderStockTable();
           populateOfferSelect();
           renderOfferTable();
+          cleanupExpiredBadges(products);
         });
 
         window.onValue(window.ref(window.db, 'categories'), (snapshot) => {
@@ -1952,6 +1986,25 @@
       if(!p.offerUntil) return true;
       const until = new Date(p.offerUntil).getTime();
       return new Date().getTime() <= until;
+    }
+
+    // "New" / "Hot Batch" tag stays live for exactly 7 days from when it was set,
+    // then disappears automatically (product itself is NOT deleted, only the tag).
+    const BADGE_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
+    function isBadgeActive(p) {
+      if (!p || !p.badge || !p.badgeSetAt) return false;
+      return (Date.now() - p.badgeSetAt) < BADGE_LIFETIME_MS;
+    }
+
+    // Clears expired batch tags from the database so they don't linger in the
+    // admin stock list / edit form once their 7 days are up.
+    function cleanupExpiredBadges(list) {
+      if (!window.db || !Array.isArray(list)) return;
+      list.forEach(p => {
+        if (p.badge && p.badgeSetAt && (Date.now() - p.badgeSetAt) >= BADGE_LIFETIME_MS) {
+          window.update(window.ref(window.db, 'products/' + p.id), { badge: '', badgeSetAt: null });
+        }
+      });
     }
 
     function renderCategories() {
@@ -2163,10 +2216,17 @@
         discountTagHtml = `<div class="offer-discount-badge">${escapeHtml(p.offerDiscountTag)}</div>`;
       }
 
+      let batchBadgeHtml = '';
+      if (isBadgeActive(p)) {
+        const badgeClass = p.badge === 'Hot Batch' ? 'badge-hot' : 'badge-new';
+        batchBadgeHtml = `<div class="product-batch-badge ${badgeClass}">${escapeHtml(p.badge)}</div>`;
+      }
+
       return `
         <div class="product-card">
           ${(p.offer && isOfferActive(p)) ? `<div class="offer-ribbon">${escapeHtml(p.offer)}</div>` : ''}
           ${discountTagHtml}
+          ${batchBadgeHtml}
           <img src="${mainImg}" class="product-img" id="img-${p.id}" alt="${p.name}" loading="lazy" onclick="openProductDetail('${p.id}')">
           <div class="product-info">
             <h4 class="product-title">${p.name}</h4>
@@ -3332,6 +3392,7 @@
 
       const colorsInput = document.getElementById('pColors').value.trim();
       const sizesInput = document.getElementById('pSizes').value.trim();
+      const badgeInput = document.getElementById('pBadge').value;
 
       const pId = 'P-' + Date.now();
       const pData = {
@@ -3352,6 +3413,8 @@
         img: uploadedProductImages[0] || '',
         colorImages: buildColorImagesMap(uploadedProductImages, uploadedProductImageColors),
         isOffer: false,
+        badge: badgeInput || '',
+        badgeSetAt: badgeInput ? Date.now() : null,
         createdAt: Date.now(),
         order: products.length
       };
@@ -3359,6 +3422,7 @@
       window.set(window.ref(window.db, 'products/' + pId), pData);
       alert('Product saved successfully!');
       document.getElementById('addProductForm').reset();
+      document.getElementById('pBadge').value = '';
       document.getElementById('pImgPreview').innerHTML = '';
       uploadedProductImages = [];
       uploadedProductImageColors = [];
@@ -3468,6 +3532,7 @@
       document.getElementById('editPOffer').value = p.offer || '';
       document.getElementById('editPStock').value = p.stock;
       document.getElementById('editPWarranty').value = p.warranty || '';
+      document.getElementById('editPBadge').value = (p.badge && isBadgeActive(p)) ? p.badge : '';
       document.getElementById('editPDescription').value = p.description || '';
 
       const catSelect = document.getElementById('editPCategory');
@@ -3498,6 +3563,9 @@
 
       const colorsInput = document.getElementById('editPColors').value.trim();
       const sizesInput = document.getElementById('editPSizes').value.trim();
+      const newBadge = document.getElementById('editPBadge').value;
+      const originalProduct = products.find(item => item.id === pId);
+      const hadActiveBadge = originalProduct && isBadgeActive(originalProduct) && originalProduct.badge === newBadge;
 
       const updateData = {
         name: document.getElementById('editPName').value,
@@ -3514,7 +3582,11 @@
         description: document.getElementById('editPDescription').value.trim(),
         images: editProductImages,
         img: editProductImages[0] || '',
-        colorImages: buildColorImagesMap(editProductImages, editProductImageColors)
+        colorImages: buildColorImagesMap(editProductImages, editProductImageColors),
+        badge: newBadge || '',
+        // Keep the original 7-day countdown running if the same active batch tag is
+        // kept as-is; otherwise (tag changed, turned on, or turned off) reset/clear it.
+        badgeSetAt: newBadge ? (hadActiveBadge ? originalProduct.badgeSetAt : Date.now()) : null
       };
 
       window.update(window.ref(window.db, 'products/' + pId), updateData);
