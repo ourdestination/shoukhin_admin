@@ -5189,5 +5189,29 @@
       }
     }
   </script>
+
+<script type="module">
+// SHOUKHIN FCM PUSH REGISTRATION
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+const SHOUKHIN_VAPID_KEY = "BPd7dsoetnhWWoSnxB9YKT0184S5WjVYnVIS2J9QMUjZZC-X5vGYqbAvIpAq5QQ";
+(async function registerShoukhinPush() {
+  try {
+    if (!('serviceWorker' in navigator) || !('Notification' in window)) return;
+    const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+    if (Notification.permission === 'default') await Notification.requestPermission();
+    if (Notification.permission !== 'granted') return;
+    const messaging = getMessaging(app);
+    const token = await getToken(messaging, {vapidKey:SHOUKHIN_VAPID_KEY,serviceWorkerRegistration:reg});
+    if (!token) return;
+    const id = 'admin-' + (localStorage.getItem('shoukhinPushId') || crypto.randomUUID());
+    localStorage.setItem('shoukhinPushId', id.replace(/^[^-]+-/,'') || id);
+    await set(ref(db, 'admin_fcm_tokens/' + encodeURIComponent(id)), {token,updatedAt:Date.now()});
+    onMessage(messaging, payload => {
+      const n=payload.notification||{};
+      if (Notification.permission==='granted' && document.visibilityState==='visible') new Notification(n.title||'Shoukhin', {body:n.body||'',icon:n.icon||'/favicon.ico',data:payload.data||{}});
+    });
+  } catch(e) { console.warn('FCM registration failed',e); }
+})();
+</script>
 </body>
 </html>
