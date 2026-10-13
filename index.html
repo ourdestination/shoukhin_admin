@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-     <meta property="og:site_name" content="Shoukhin Admin Portal">
+     <meta property="og:site_name" content="Labonya Prohor Admin Portal">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- টাইটেল (Title Tag) -->
-    <title>Shoukhin - Admin Portal</title>
+    <title>Labonya Prohor - Admin Portal</title>
 
     <!-- মেটা ডেসক্রিপশন (Meta Description) -->
-    <meta name="description" content="Shoukhin Online Shop Admin Panel - Authorized personnel only.">
+    <meta name="description" content="Labonya Prohor Online Shop Admin Panel - Authorized personnel only.">
 
     <!-- এই পেজটি গুগলে ইনডেক্স হবে না (Robots Meta Tag) -->
     <meta name="robots" content="noindex, nofollow">
@@ -24,8 +24,8 @@
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "Shoukhin",
-      "alternateName": ["Shoukhin Online Shop"],
+      "name": "Labonya Prohor",
+      "alternateName": ["Labonya Prohor Online Shop"],
       "url": "https://ourdestination.github.io/shoukhin/"
     }
     </script>
@@ -52,6 +52,20 @@
     /* This is the standalone Admin Portal - customer storefront sections are never shown here */
     .storefront-only { display: none !important; }
 
+    /* Login page: big shop logo + name */
+    #adminLoginGate .admin-gate-box { position: relative; z-index: 1; max-width: 440px; padding-top: 44px; }
+    .gate-brand { margin-bottom: 14px; }
+
+    /* square logo (no animation on the logo itself) + rings spreading around it, like the Note Jar app opening screen */
+    .lp-logo-wrap { position: relative; width: 130px; height: 130px; margin: 0 auto; }
+    .lp-logo-wrap::before, .lp-logo-wrap::after { content: ""; position: absolute; inset: 0; border-radius: 28px; border: 2px solid #e91e63; opacity: 0; animation: lpRing 1.8s ease-out .3s infinite; }
+    .lp-logo-wrap::after { animation-delay: 1.2s; }
+    .lp-logo-wrap img { position: relative; z-index: 1; width: 130px; height: 130px; border-radius: 28px; object-fit: cover; background: #fff; display: block; border: 0; animation: none; box-shadow: 0 4px 14px rgba(0,0,0,.25); }
+    @keyframes lpRing { 0% { opacity: .55; transform: scale(1); } 100% { opacity: 0; transform: scale(1.7); } }
+    .gate-brand .lp-logo-wrap { margin-bottom: 26px; }
+    .gate-shopname { font-family: 'Poppins', sans-serif; font-size: 2.1rem; font-weight: 800; line-height: 1.1; margin: 0;
+      background: linear-gradient(45deg, #e91e63, #9c27b0, #ff4081); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .gate-brand .gate-portal { font-size: 1.05rem; font-weight: 600; color: #4a235a; margin-top: 6px; letter-spacing: .5px; }
     #adminLoginGate {
       position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center;
       background: linear-gradient(135deg, #2c3e50 0%, #4a235a 100%); padding: 20px; overflow-y: auto;
@@ -327,7 +341,7 @@
     .discount-badge .discount-percent { display:inline-block; font-size:9px; line-height:1; white-space:nowrap; }
     .discount-badge .discount-off { display:inline-block; font-size:9px; line-height:1; margin-left:3px; white-space:nowrap; }
 
-    /* Shoukhin Agent / Promo Code management */
+    /* Labonya Prohor Agent / Promo Code management */
     .agent-admin-card {
       background:#fff; border:1px solid #ead7ef; border-radius:12px; padding:14px;
       box-shadow:0 3px 12px rgba(0,0,0,0.05); margin-bottom:14px;
@@ -583,9 +597,15 @@
   <!-- Standalone Admin Login Gate -->
   <div id="adminLoginGate">
     <div class="admin-gate-box">
-      <div class="gate-icon"><i class="fa-solid fa-user-shield"></i></div>
-      <h2>Admin Portal</h2>
-      <p class="gate-sub">Shoukhin Online Shop &mdash; Authorized access only</p>
+      <div class="gate-brand">
+        <div class="lp-logo-wrap">
+          <img id="gateLogo" alt="Labonya Prohor" src="https://ourdestination.github.io/shoukhin/favicon.png">
+        </div>
+        <h1 class="gate-shopname">Labonya Prohor</h1>
+        <div class="gate-portal"><i class="fa-solid fa-user-shield"></i> Admin Portal</div>
+      </div>
+      <p class="gate-sub">Labonya Prohor Online Shop &mdash; Authorized access only</p>
+      <p style="text-align:center; margin:6px 0 14px;"><a class="js-shop-link" href="index.html" style="color:#666; font-size:0.9rem; text-decoration:none;"><i class="fa-solid fa-arrow-left"></i> Back to Shop</a></p>
 
       <div id="fingerprintLoginBox" style="display:none;">
         <button type="button" class="fingerprint-btn" onclick="fingerprintLogin()" title="Login with Fingerprint">
@@ -625,7 +645,7 @@
     <div class="logo-container">
       <img id="siteLogo" src="https://via.placeholder.com/50?text=Logo" alt="Logo" class="logo-img" loading="lazy" onclick="showFullImage(this.src)">
       <div>
-        <h2 id="siteTitle">Shoukhin</h2>
+        <h2 id="siteTitle">Labonya Prohor</h2>
         <span id="siteCodeHeader" class="site-code-header"></span>
         <div class="live-visitor-badge-header"><i class="fa-solid fa-user"></i> <b id="liveVisitorCount">0</b></div>
       </div>
@@ -643,7 +663,7 @@
 
   <div class="hero">
     <img id="heroSiteLogo" src="https://via.placeholder.com/100?text=Logo" alt="Logo" class="hero-logo-img" loading="lazy" onclick="showFullImage(this.src)">
-    <h1>Shoukhin Online Shop</h1>
+    <h1>Labonya Prohor Online Shop</h1>
     <span id="siteCodeHero" class="site-code-hero"></span>
   </div>
   </div>
@@ -678,6 +698,7 @@
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <h2><i class="fa-solid fa-gauge"></i> Shop Management (Admin)</h2>
         <div class="admin-live-box"><span class="live-dot" style="width:7px;height:7px;"></span> Live Visitors: <span id="adminLiveVisitorCount">0</span></div>
+        <a class="js-shop-link" href="index.html" target="_blank" rel="noopener" onclick="openShopPopup(); return false;" style="background:#e8f5e9; color:#1e7e34; border:1px solid #b7dfbb; padding:5px 15px; border-radius:5px; text-decoration:none; font-size:0.9rem;"><i class="fa-solid fa-store"></i> View Shop</a>
         <button id="adminNotifBtn" onclick="openNotifModal()" style="background:#fff3cd; color:#7a5c00; border:1px solid #ffe08a; padding:5px 15px; border-radius:5px; cursor:pointer; position:relative;">
           <i class="fa-solid fa-bell"></i> Notifications
           <span id="notifCount" class="notif-badge" style="position:static; margin-left:4px; background:red; border-radius:10px; padding:2px 7px;">0</span>
@@ -692,7 +713,7 @@
         <button class="admin-tab" data-tab="oTab" onclick="switchAdminTab('oTab', this)">Orders</button>
         <button class="admin-tab" data-tab="offTab" onclick="switchAdminTab('offTab', this)">Offer Management</button>
         <button class="admin-tab" data-tab="couponTab" onclick="switchAdminTab('couponTab', this)">Coupon Management</button>
-        <button class="admin-tab" data-tab="agentTab" onclick="switchAdminTab('agentTab', this)">Shoukhin Agent</button>
+        <button class="admin-tab" data-tab="agentTab" onclick="switchAdminTab('agentTab', this)">Labonya Prohor Agent</button>
         <button class="admin-tab" data-tab="incomeTab" onclick="switchAdminTab('incomeTab', this)">Income</button>
         <button class="admin-tab" data-tab="cashTab" onclick="switchAdminTab('cashTab', this)">Cashbook</button>
         <button class="admin-tab" data-tab="uTab" onclick="switchAdminTab('uTab', this)">Customer Data</button>
@@ -872,7 +893,7 @@
               <input type="number" id="cMinOrder" placeholder="e.g. 500 (Optional)" min="0">
             </div>
             <div>
-              <label style="font-size:12px; font-weight:bold;">Shoukhin Agent (Optional):</label>
+              <label style="font-size:12px; font-weight:bold;">Labonya Prohor Agent (Optional):</label>
               <select id="cAgent"><option value="">-- General / No Agent --</option></select>
             </div>
             <div>
@@ -905,9 +926,9 @@
       </div>
 
 
-      <!-- Shoukhin Agent Tab -->
+      <!-- Labonya Prohor Agent Tab -->
       <div id="agentTab" class="tab-content">
-        <h3><i class="fa-solid fa-user-tie"></i> Shoukhin Agent</h3>
+        <h3><i class="fa-solid fa-user-tie"></i> Labonya Prohor Agent</h3>
         <p style="font-size:12px; color:#777; margin:4px 0 14px;">Sales promotion agents, profiles and their assigned promo codes.</p>
 
         <div class="agent-admin-card">
@@ -1049,7 +1070,7 @@
 
           <hr style="margin: 20px 0;">
           <h4>Home Photo Update</h4>
-          <label style="font-size: 13px; margin-top: 5px; display: block;">"Shoukhin Online Shop" লেখার উপরের হোম ইমেজ পরিবর্তন করুন (Max: 200KB):</label>
+          <label style="font-size: 13px; margin-top: 5px; display: block;">"Labonya Prohor Online Shop" লেখার উপরের হোম ইমেজ পরিবর্তন করুন (Max: 200KB):</label>
           <input type="file" id="settingHomePhotoFile" accept="image/*">
           <button onclick="updateHomePhoto()" class="form-btn" style="background:#6f42c1;">Upload & Update Home Photo</button>
 
@@ -1175,6 +1196,9 @@
       <button class="bottom-nav-item" data-tab="uTab" onclick="goToAdminTab('uTab')">
         <i class="fa-solid fa-users"></i><span>Customers</span>
       </button>
+      <button class="bottom-nav-item" data-tab="shop" onclick="openShopPopup()">
+        <i class="fa-solid fa-store"></i><span>View Shop</span>
+      </button>
       <button class="bottom-nav-item" data-tab="more" onclick="openAdminMoreMenu()">
         <i class="fa-solid fa-ellipsis"></i><span>More</span>
       </button>
@@ -1182,6 +1206,20 @@
   </nav>
 
   <!-- "More" sheet: the remaining sections not on the bottom bar -->
+  <!-- View Shop popup panel -->
+  <div id="shopPreviewModal" class="modal" style="z-index:3500; background:rgba(0,0,0,0.6);">
+    <div style="background:#fff; width:100%; max-width:1100px; height:100%; max-height:100vh; display:flex; flex-direction:column; border-radius:14px 14px 0 0; overflow:hidden; margin-top:auto;">
+      <div style="display:flex; align-items:center; gap:8px; padding:8px 12px; padding-top:calc(8px + env(safe-area-inset-top, 0px)); background:var(--dark, #222); color:#fff;">
+        <i class="fa-solid fa-store"></i>
+        <b style="flex:1; font-size:0.95rem;">Shop Preview</b>
+        <button type="button" onclick="reloadShopPopup()" title="Reload" style="background:rgba(255,255,255,0.15); color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;"><i class="fa-solid fa-rotate-right"></i></button>
+        <a id="shopPopupNewTab" href="https://ourdestination.github.io/shoukhin/" target="_blank" rel="noopener" title="Open in new tab" style="background:rgba(255,255,255,0.15); color:#fff; border-radius:6px; padding:6px 10px; text-decoration:none;"><i class="fa-solid fa-up-right-from-square"></i></a>
+        <button type="button" onclick="closeShopPopup()" title="Close" style="background:#dc3545; color:#fff; border:none; border-radius:6px; padding:6px 12px; cursor:pointer; font-size:1rem;">&times;</button>
+      </div>
+      <iframe id="shopPopupFrame" title="Shop" style="flex:1; width:100%; border:0; background:#fff;" allow="clipboard-write"></iframe>
+    </div>
+  </div>
+
   <div id="adminMoreModal" class="modal">
     <div class="modal-content" style="max-width:340px;">
       <span class="close-btn" onclick="closeModal('adminMoreModal')">&times;</span>
@@ -1190,7 +1228,7 @@
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('cTab');"><i class="fa-solid fa-layer-group"></i> Categories</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('offTab');"><i class="fa-solid fa-fire"></i> Offer Management</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('couponTab');"><i class="fa-solid fa-tags"></i> Coupon Management</button>
-        <button onclick="closeModal('adminMoreModal'); goToAdminTab('agentTab');"><i class="fa-solid fa-user-tie"></i> Shoukhin Agent</button>
+        <button onclick="closeModal('adminMoreModal'); goToAdminTab('agentTab');"><i class="fa-solid fa-user-tie"></i> Labonya Prohor Agent</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('sTab');"><i class="fa-solid fa-gear"></i> Website Settings</button>
       </div>
     </div>
@@ -1512,7 +1550,7 @@
       <div id="printableMemo">
         <div style="text-align: center; border-bottom: 2px dashed #000; padding-bottom: 10px;">
           <img id="memoShopLogo" src="" alt="Logo" style="width: 100px; height: 100px; object-fit: cover; margin-bottom: 5px; display: inline-block;">
-          <h2 style="font-family: 'Poppins', sans-serif; color: var(--primary);">Shoukhin Online Shop</h2>
+          <h2 style="font-family: 'Poppins', sans-serif; color: var(--primary);">Labonya Prohor Online Shop</h2>
           <p>House No. 12, Gourgopal Angina Road, Kotwali, Faridpur-7800.</p>
           <p>Phone: +880 1345 409887</p>
           <h4>Cash Memo / Invoice</h4>
@@ -1541,7 +1579,7 @@
   <footer>
     <div class="footer-content">
       <div class="footer-section">
-        <h3 id="footerTitle" onclick="openAdminCheck()" style="font-family: 'Poppins', sans-serif; cursor: pointer;" title="Admin Panel">Shoukhin</h3>
+        <h3 id="footerTitle" onclick="openAdminCheck()" style="font-family: 'Poppins', sans-serif; cursor: pointer;" title="Admin Panel">Labonya Prohor</h3>
         <p>Guaranteed authentic products for your beauty and care.</p>
         <div class="counter-box">
           <i class="fa-solid fa-users"></i> Visitor Counter: <b id="visitorCount">0</b>
@@ -1554,7 +1592,7 @@
         <p><i class="fa-solid fa-envelope"></i> shoukhinonlineshop@gmail.com</p>
       </div>
     </div>
-    <p style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px;">&copy; 2026 Shoukhin. All Rights Reserved.</p>
+    <p style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px;">&copy; 2026 Labonya Prohor. All Rights Reserved.</p>
   </footer>
   </div>
 
@@ -1562,7 +1600,8 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-analytics.js";
-    import { getDatabase, ref, set, onValue, update, remove, push, onDisconnect } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue, update, remove, push, onDisconnect, increment, get } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDdlwyradz1KD4-Mu5vWT47Zp-ysuqRM1A",
@@ -1587,6 +1626,31 @@
     window.remove = remove;
     window.push = push;
     window.onDisconnect = onDisconnect;
+    window.increment = increment;
+    window.get = get;
+    window.app = app;          // the FCM module below needs this (it is a separate module scope)
+
+    // ---------- Admin login = Firebase Authentication (email + password) ----------
+    // Firebase Console > Authentication > Users > Add user  ->  email below + the admin password you want.
+    // Then put that user's UID into database.rules.json (ADMIN_UID).
+    const ADMIN_EMAIL = "admin@labonyaprohor.com";
+    const auth = getAuth(app);
+    window.fbAuth = auth;
+    window.ADMIN_EMAIL = ADMIN_EMAIL;
+    window.whenAuthReady = () => auth.authStateReady().then(() => auth.currentUser);
+    window.adminSignIn = (pw) => signInWithEmailAndPassword(auth, ADMIN_EMAIL, pw);
+    window.adminSignOut = () => signOut(auth);
+    window.adminVerify = async (pw) => {            // re-check the password before dangerous actions
+      try {
+        if (auth.currentUser) await reauthenticateWithCredential(auth.currentUser, EmailAuthProvider.credential(ADMIN_EMAIL, pw));
+        else await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pw);
+        return true;
+      } catch (e) { return false; }
+    };
+    window.adminChangePassword = async (currentPw, newPw) => {
+      await signInWithEmailAndPassword(auth, ADMIN_EMAIL, currentPw);
+      await updatePassword(auth.currentUser, newPw);
+    };
   </script>
 
   <script>
@@ -1618,7 +1682,6 @@
     let agents = [];
     let appliedCoupon = null;
     let couponDiscount = 0;
-    let adminPassword = "01518411872";
     let fingerprintEnabled = false; // synced from Firebase settings; the actual credential is stored per-device in localStorage
     let pinLockEnabled = false; // synced from Firebase settings, like adminPassword — works on every device
     let adminPin = "";
@@ -1649,7 +1712,11 @@
     let comboOffers = [];
     let offerCustomerMessage = '';
 
+    // >>> Put the real address of your shop page here (file name or full URL), e.g. 'https://ourdestination.github.io/shoukhin/'
+    const SHOP_PAGE_URL = 'https://ourdestination.github.io/shoukhin/';
+
     document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('.js-shop-link').forEach(a => { a.href = SHOP_PAGE_URL; });
       initApp();
       initLiveVisitorPresence();
       populateDistricts();
@@ -1847,21 +1914,74 @@
       return map;
     }
 
+    // One shared AudioContext, unlocked by the first tap/click/key. Browsers keep a freshly created
+    // context "suspended" when there was no recent user gesture, so the old code was silent.
+    let _notifCtx = null;
+    function getNotifCtx() {
+      if (!_notifCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) _notifCtx = new AC();
+      }
+      return _notifCtx;
+    }
+    function unlockNotifAudio() {
+      const c = getNotifCtx();
+      if (!c) return;
+      if (c.state === 'suspended') c.resume();
+      if (!unlockNotifAudio.done) {          // iOS/Safari needs a node started inside a real tap
+        try {
+          const o = c.createOscillator(), g = c.createGain();
+          g.gain.value = 0.0001; o.connect(g); g.connect(c.destination);
+          o.start(); o.stop(c.currentTime + 0.05);
+          unlockNotifAudio.done = true;
+        } catch (e) {}
+      }
+      hideSoundBanner();
+    }
+    ['click', 'touchstart', 'keydown'].forEach(ev => document.addEventListener(ev, unlockNotifAudio, { passive: true }));
+
     function playNotificationSound() {
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.4);
+        const ctx = getNotifCtx();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') ctx.resume();
+        // clear two-note "ding-dong" so it stands out
+        [[880, 0], [1175, 0.22]].forEach(([freq, delay]) => {
+          const t = ctx.currentTime + delay;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.0001, t);
+          gain.gain.exponentialRampToValueAtTime(0.8, t + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.42);
+        });
       } catch (e) {
         console.log("Audio play error:", e);
       }
+    }
+
+    // If the page was opened without a tap (e.g. auto-login), the browser keeps sound blocked.
+    // Show a one-tap banner so the admin can switch it on (and hear a test sound).
+    function hideSoundBanner() {
+      const el = document.getElementById('soundEnableBanner');
+      if (el) el.remove();
+    }
+    function checkSoundReady() {
+      setTimeout(() => {
+        const c = getNotifCtx();
+        if (!c || c.state === 'running' || document.getElementById('soundEnableBanner')) return;
+        const el = document.createElement('div');
+        el.id = 'soundEnableBanner';
+        el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:99998;background:#7a5c00;color:#fff;padding:10px 16px;border-radius:24px;font-size:14px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35);max-width:92%;text-align:center;';
+        el.innerHTML = '🔔 নতুন অর্ডারের সাউন্ড চালু করতে এখানে ট্যাপ করুন';
+        el.addEventListener('click', () => { unlockNotifAudio(); playNotificationSound(); });
+        document.body.appendChild(el);
+      }, 1500);
     }
 
     // --- Instant order alert system for the Admin Portal ---
@@ -1884,11 +2004,18 @@
       // as long as the browser/OS is open and permission was granted at login).
       if (window.Notification && Notification.permission === 'granted') {
         try {
-          const n = new Notification('🛒 New Order Received!', {
-            body: `${order.userName || 'Customer'} • ${order.total || 0}৳ • ${order.paymentMethod || ''}`,
-            tag: 'shoukhin-order-' + order.id
-          });
-          n.onclick = () => { window.focus(); n.close(); };
+          const nTitle = '🛒 New Order Received!';
+          const nOpts = { body: `${order.userName || 'Customer'} • ${order.total || 0}৳ • ${order.paymentMethod || ''}`, tag: 'shoukhin-order-' + order.id };
+          if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+            // mobile Chrome throws on new Notification(), so use the service worker when there is one
+            navigator.serviceWorker.getRegistration().then(reg => {
+              if (reg) reg.showNotification(nTitle, nOpts);
+              else { const n = new Notification(nTitle, nOpts); n.onclick = () => { window.focus(); n.close(); }; }
+            }).catch(() => {});
+          } else {
+            const n = new Notification(nTitle, nOpts);
+            n.onclick = () => { window.focus(); n.close(); };
+          }
         } catch (e) { console.log('Notification error:', e); }
       }
 
@@ -1930,7 +2057,7 @@
         <span class="toast-close" onclick="this.parentElement.remove()">&times;</span>
         <div><i class="fa-solid fa-cart-shopping"></i> <b>New Order!</b></div>
         <div style="margin-top:6px; font-size:0.85rem; color:#444;">
-          ${order.userName || 'Customer'} &bull; ${order.total || 0}৳<br>
+          ${escapeHtml(order.userName || 'Customer')} &bull; ${order.total || 0}৳<br>
           ${order.paymentMethod || ''} &bull; ${order.date || ''}
         </div>
       `;
@@ -1948,6 +2075,150 @@
       bdDistricts.forEach(d => {
         select.innerHTML += `<option value="${d}">${d}</option>`;
       });
+    }
+
+    // Orders, customers, notifications, coupons, agents, expenses, payouts are admin-only data.
+    // They are loaded only after Firebase sign-in succeeded (before that the database would refuse them).
+    let adminListenersStarted = false;
+    let notifFirstLoadDone = false;
+    // phone -> order ids index (order_index/<phone>/<orderId>) used by customer-side tracking.
+    // Orders placed before the index existed are added automatically the first time the admin panel opens.
+    // Coupons saved under a key other than COUPON-<CODE> are moved once, so customer-side lookup by code keeps working.
+    let couponKeysMigrated = false;
+    function migrateCouponKeys(data) {
+      if (couponKeysMigrated || !data) return;
+      couponKeysMigrated = true;
+      const patch = {};
+      Object.entries(data).forEach(([k, c]) => {
+        if (!c || !c.code) return;
+        const want = 'COUPON-' + String(c.code).toUpperCase();
+        if (k !== want && !data[want]) {
+          patch['coupons/' + want] = Object.assign({}, c, { key: want, code: String(c.code).toUpperCase() });
+          patch['coupons/' + k] = null;
+        }
+      });
+      if (Object.keys(patch).length) {
+        Promise.resolve(window.update(window.ref(window.db), patch)).catch(e => console.error('Coupon key migration failed:', e));
+      }
+    }
+
+    let orderIndexSynced = false;
+    function syncOrderIndex(list) {
+      if (orderIndexSynced || !list || !list.length) return;
+      orderIndexSynced = true;
+      const patch = {};
+      list.forEach(o => {
+        if (o && o.id && /^01[3-9][0-9]{8}$/.test(String(o.userPhone || ''))) patch['order_index/' + o.userPhone + '/' + o.id] = o.createdAt || 1;
+      });
+      if (Object.keys(patch).length) {
+        Promise.resolve(window.update(window.ref(window.db), patch)).catch(e => console.error('Order index sync failed:', e));
+      }
+    }
+
+    function initAdminListeners() {
+      if (adminListenersStarted || !window.db) return;
+      adminListenersStarted = true;
+        window.onValue(window.ref(window.db, 'orders'), (snapshot) => {
+          const data = snapshot.val();
+          const newOrders = data ? Object.values(data) : [];
+
+          if (previousOrderCount !== -1) {
+            // New orders are found by id, so a delete + a new order arriving together still alerts.
+            const oldIds = new Set(orders.map(o => o.id));
+            const freshOrders = newOrders.filter(o => !oldIds.has(o.id));
+            freshOrders.forEach(o => alertNewOrder(o));
+          }
+          previousOrderCount = newOrders.length;
+
+          orders = newOrders;
+          syncOrderIndex(newOrders);
+          renderOrders();
+          renderCashbook();
+        });
+
+        window.onValue(window.ref(window.db, 'customer_history'), (snapshot) => {
+          const data = snapshot.val();
+          customerDataHistory = data || {};
+          renderCustomerData();
+        });
+
+        window.onValue(window.ref(window.db, 'notifications'), (snapshot) => {
+          const data = snapshot.val();
+          const prevNotifKeys = new Set(notifications.map(n => n.notifKey));
+          notifications = data ? Object.entries(data).map(([key, val]) => ({ notifKey: key, ...val })) : [];
+          if (notifFirstLoadDone) {
+            // orders already alert through the orders listener; product requests get their own alert
+            notifications.filter(n => !prevNotifKeys.has(n.notifKey) && n.orderId === 'Product Request').forEach(() => {
+              playNotificationSound(); setTimeout(playNotificationSound, 600);
+            });
+          }
+          notifFirstLoadDone = true;
+          renderNotificationsUI();
+        });
+
+        window.onValue(window.ref(window.db, 'coupons'), (snapshot) => {
+          const data = snapshot.val();
+          coupons = data ? Object.values(data) : [];
+          migrateCouponKeys(data);
+          renderCouponTable();
+          renderAgentProfiles();
+          populateAgentSelectors();
+        });
+
+        window.onValue(window.ref(window.db, 'agents'), (snapshot) => {
+          const data = snapshot.val();
+          agents = data ? Object.entries(data).map(([key, value]) => ({ ...value, _key: key })) : [];
+          renderAgentProfiles();
+          renderCouponTable();
+          populateAgentSelectors();
+        });
+
+        window.onValue(window.ref(window.db, 'expenses'), (snapshot) => {
+          const data = snapshot.val();
+          expenses = data ? Object.values(data) : [];
+          renderExpenses();
+          renderCashbook();
+        });
+
+        window.onValue(window.ref(window.db, 'agentPayouts'), (snapshot) => {
+          const data = snapshot.val();
+          agentPayouts = data ? Object.values(data) : [];
+          renderAgentPayouts();
+          renderIncome();
+          renderCashbook();
+          renderAgentProfiles();
+        });
+
+      window.onValue(window.ref(window.db, 'admin_private/security'), (snapshot) => {
+        const v = snapshot.val() || {};
+        adminPin = v.adminPin || '';
+        updatePinSettingsUI();
+        initGateFlow();
+      }, () => {});
+    }
+
+    async function enforceAdminAuth() {
+      const user = window.whenAuthReady ? await window.whenAuthReady() : null;
+      if (user) { initAdminListeners(); return true; }
+      // remembered "logged in" flag but no Firebase session -> ask for the password again
+      localStorage.removeItem('isAdminLoggedIn');
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('adminLoginGate').style.display = 'flex';
+      document.body.classList.remove('admin-logged-in');
+      initGateFlow();
+      if (typeof showPasswordFallback === 'function') showPasswordFallback();
+      document.getElementById('gateError').innerText = 'নিরাপত্তার জন্য পাসওয়ার্ড দিয়ে আবার লগইন করুন।';
+      return false;
+    }
+
+    function adminAuthErrorMessage(e) {
+      const code = (e && e.code) || '';
+      if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('invalid-login')) return 'Incorrect password. Try again.';
+      if (code.includes('user-not-found')) return 'Admin user এখনো Firebase Authentication-এ বানানো হয়নি (Console > Authentication > Users > Add user).';
+      if (code.includes('operation-not-allowed') || code.includes('configuration-not-found')) return 'Firebase Console > Authentication > Sign-in method-এ Email/Password চালু করুন।';
+      if (code.includes('too-many-requests')) return 'অনেকবার ভুল হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।';
+      if (code.includes('network')) return 'ইন্টারনেট সংযোগ পরীক্ষা করুন।';
+      return 'Login failed. ' + (code || '');
     }
 
     function initApp() {
@@ -1977,51 +2248,6 @@
           renderProducts();
         });
 
-        window.onValue(window.ref(window.db, 'orders'), (snapshot) => {
-          const data = snapshot.val();
-          const newOrders = data ? Object.values(data) : [];
-
-          if (previousOrderCount !== -1 && newOrders.length > previousOrderCount) {
-            // Figure out which order(s) are new (by id) and alert for each one.
-            const oldIds = new Set(orders.map(o => o.id));
-            const freshOrders = newOrders.filter(o => !oldIds.has(o.id));
-            freshOrders.forEach(o => alertNewOrder(o));
-          }
-          previousOrderCount = newOrders.length;
-
-          orders = newOrders;
-          renderOrders();
-          renderCashbook();
-        });
-
-        window.onValue(window.ref(window.db, 'customer_history'), (snapshot) => {
-          const data = snapshot.val();
-          customerDataHistory = data || {};
-          renderCustomerData();
-        });
-
-        window.onValue(window.ref(window.db, 'notifications'), (snapshot) => {
-          const data = snapshot.val();
-          notifications = data ? Object.entries(data).map(([key, val]) => ({ notifKey: key, ...val })) : [];
-          renderNotificationsUI();
-        });
-
-        window.onValue(window.ref(window.db, 'coupons'), (snapshot) => {
-          const data = snapshot.val();
-          coupons = data ? Object.values(data) : [];
-          renderCouponTable();
-          renderAgentProfiles();
-          populateAgentSelectors();
-        });
-
-        window.onValue(window.ref(window.db, 'agents'), (snapshot) => {
-          const data = snapshot.val();
-          agents = data ? Object.entries(data).map(([key, value]) => ({ ...value, _key: key })) : [];
-          renderAgentProfiles();
-          renderCouponTable();
-          populateAgentSelectors();
-        });
-
         window.onValue(window.ref(window.db, 'special_offer_settings'), (snapshot) => {
           const data = snapshot.val() || {};
           offerCustomerMessage = data.customerMessage || '';
@@ -2036,22 +2262,6 @@
           populateComboProductSelect();
           renderComboOfferTable();
           renderProducts();
-        });
-
-        window.onValue(window.ref(window.db, 'expenses'), (snapshot) => {
-          const data = snapshot.val();
-          expenses = data ? Object.values(data) : [];
-          renderExpenses();
-          renderCashbook();
-        });
-
-        window.onValue(window.ref(window.db, 'agentPayouts'), (snapshot) => {
-          const data = snapshot.val();
-          agentPayouts = data ? Object.values(data) : [];
-          renderAgentPayouts();
-          renderIncome();
-          renderCashbook();
-          renderAgentProfiles();
         });
 
         window.onValue(window.ref(window.db, 'settings'), (snapshot) => {
@@ -2082,11 +2292,9 @@
               document.getElementById('siteCodeHero').innerText = settings.siteCode;
               document.getElementById('settingSiteCode').value = settings.siteCode;
             }
-            if(settings.adminPass) adminPassword = settings.adminPass;
             fingerprintEnabled = !!settings.fingerprintEnabled;
             localStorage.setItem('adminFingerprintEnabledCache', fingerprintEnabled ? 'true' : 'false');
             pinLockEnabled = !!settings.pinLockEnabled;
-            adminPin = settings.adminPin || "";
             localStorage.setItem('adminPinEnabledCache', pinLockEnabled ? 'true' : 'false');
             initGateFlow();
             updateFingerprintSettingsUI();
@@ -2347,8 +2555,8 @@
     }
 
     function escapeHtml(text) {
-      if(!text) return '';
-      return text.replace(/[&<>"']/g, function(m) {
+      if(text === null || text === undefined) return '';
+      return String(text).replace(/[&<>"']/g, function(m) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
       });
     }
@@ -3076,18 +3284,16 @@
       };
 
       window.set(window.ref(window.db, 'orders/' + orderId), orderData);
+      window.set(window.ref(window.db, 'order_index/' + phone + '/' + orderId), orderData.createdAt);
 
       // Update coupon tracking stats in database
       if (appliedCoupon) {
         const cRef = window.ref(window.db, 'coupons/' + appliedCoupon.key);
-        const updatedUsed = (appliedCoupon.usedCount || 0) + 1;
-        const updatedSales = (appliedCoupon.totalSales || 0) + grandTotal;
-        const updatedDiscount = (appliedCoupon.totalDiscountGiven || 0) + couponDiscount;
 
         window.update(cRef, {
-          usedCount: updatedUsed,
-          totalSales: updatedSales,
-          totalDiscountGiven: updatedDiscount
+          usedCount: window.increment(1),
+          totalSales: window.increment(grandTotal),
+          totalDiscountGiven: window.increment(couponDiscount)
         });
       }
 
@@ -3108,9 +3314,9 @@
           const prod = products.find(p => p.id === c.id);
           if(prod) {
             const pRef = window.ref(window.db, 'products/' + c.id);
-            const newStock = Math.max(0, prod.stock - c.qty);
-            const newSold = (prod.sold || 0) + c.qty;
-            window.update(pRef, { stock: newStock, sold: newSold });
+            // atomic: two customers buying at the same time no longer overwrite each other's stock count
+            const takeQty = Math.min(c.qty, Math.max(0, Number(prod.stock) || 0));
+            window.update(pRef, { stock: window.increment(-takeQty), sold: window.increment(c.qty) });
           }
         }
       });
@@ -3141,11 +3347,9 @@
       const phone = order.userPhone;
       const historyRef = window.ref(window.db, 'customer_history/' + phone);
       
-      let existing = customerDataHistory[phone] || { phone: phone, name: order.userName, totalOrders: 0, completed: 0, cancelled: 0, totalSpent: 0 };
-      existing.name = order.userName;
-      existing.totalOrders = (existing.totalOrders || 0) + 1;
-
-      window.set(historyRef, existing);
+      // update() + increment: keeps completed / cancelled / totalSpent untouched (old code used set() and wiped them
+      // for every normal customer, because their browser never has the customer_history list loaded)
+      window.update(historyRef, { phone: phone, name: order.userName, totalOrders: window.increment(1) });
     }
 
     function trackOrder() {
@@ -3189,6 +3393,8 @@
       document.getElementById('adminLoginGate').style.display = 'none';
       document.getElementById('adminPanel').style.display = 'block';
       document.body.classList.add('admin-logged-in');
+      enforceAdminAuth();
+      checkSoundReady();
       // Ask permission for desktop notifications so new orders can alert the admin
       // even when this tab isn't focused.
       if (window.Notification && Notification.permission === 'default') {
@@ -3196,19 +3402,23 @@
       }
     }
 
-    function gateLogin() {
+    async function gateLogin() {
       const input = document.getElementById('gatePassInput');
       const p = input.value;
       const errBox = document.getElementById('gateError');
-      if (p === adminPassword) {
+      if (!p) { errBox.innerText = 'Password দিন।'; return; }
+      try {
+        await window.adminSignIn(p);
         localStorage.setItem('isAdminLoggedIn', 'true');
         errBox.innerText = '';
         input.value = '';
         showAdminDashboard();
-      } else {
-        errBox.innerText = 'Incorrect password. Try again.';
+      } catch (e) {
+        errBox.innerText = adminAuthErrorMessage(e);
       }
     }
+
+    function loginAdmin() { closeModal('adminLoginModal'); }   // legacy modal button (was an undefined function)
 
     // --- Fingerprint (WebAuthn platform biometric) admin lock ---
     // The credential itself is bound to this specific browser/device (that's how
@@ -3365,7 +3575,7 @@
       adminPin = pin;
       pinLockEnabled = true;
       localStorage.setItem('adminPinEnabledCache', 'true');
-      if (window.db) window.update(window.ref(window.db, 'settings'), { adminPin: pin, pinLockEnabled: true });
+      if (window.db) { window.update(window.ref(window.db, 'admin_private/security'), { adminPin: pin }); window.update(window.ref(window.db, 'settings'), { pinLockEnabled: true }); }
       alert('পিন লক সফলভাবে চালু/আপডেট হয়েছে!');
       document.getElementById('newAdminPin').value = '';
       updatePinSettingsUI();
@@ -3443,8 +3653,8 @@
         const credential = await navigator.credentials.create({
           publicKey: {
             challenge: challenge,
-            rp: { name: 'Shoukhin Admin Portal' },
-            user: { id: userId, name: 'admin', displayName: 'Shoukhin Admin' },
+            rp: { name: 'Labonya Prohor Admin Portal' },
+            user: { id: userId, name: 'admin', displayName: 'Labonya Prohor Admin' },
             pubKeyCredParams: [
               { alg: -7, type: 'public-key' },
               { alg: -257, type: 'public-key' }
@@ -3499,6 +3709,7 @@
 
     function logoutAdmin() {
       localStorage.removeItem('isAdminLoggedIn');
+      if (window.adminSignOut) window.adminSignOut().finally(() => location.reload());
       document.getElementById('adminPanel').style.display = 'none';
       document.getElementById('adminLoginGate').style.display = 'flex';
       document.body.classList.remove('admin-logged-in');
@@ -3542,6 +3753,31 @@
         const moreBtn = document.querySelector('.bottom-app-nav-admin .bottom-nav-item[data-tab="more"]');
         if (moreBtn) moreBtn.classList.add('active');
       }
+    }
+
+    // View Shop: opens the live shop inside a popup panel (iframe). It is loaded on open and cleared on close,
+    // so the admin's preview never keeps a "live visitor" connection running in the background.
+    function openShopPopup() {
+      const url = (typeof SHOP_PAGE_URL !== 'undefined' && SHOP_PAGE_URL) || 'https://ourdestination.github.io/shoukhin/';
+      const frame = document.getElementById('shopPopupFrame');
+      const link = document.getElementById('shopPopupNewTab');
+      if (link) link.href = url;
+      if (frame) frame.src = url;
+      openModal('shopPreviewModal');
+    }
+    function reloadShopPopup() {
+      const frame = document.getElementById('shopPopupFrame');
+      if (!frame) return;
+      const url = frame.src;
+      frame.src = 'about:blank';
+      setTimeout(() => { frame.src = url; }, 50);
+    }
+    function closeShopPopup() {
+      closeModal('shopPreviewModal');
+      const frame = document.getElementById('shopPopupFrame');
+      if (frame) frame.src = 'about:blank';
+      // put the highlight back on the tab that was open before
+      document.querySelectorAll('.bottom-app-nav-admin .bottom-nav-item[data-tab="shop"]').forEach(b => b.classList.remove('active'));
     }
 
     function openAdminMoreMenu() {
@@ -3825,14 +4061,14 @@
       orders.forEach(o => {
         let paymentDisplay = `<b>${o.paymentMethod || 'COD'}</b>`;
         if(o.paymentMethod === 'Online') {
-          paymentDisplay += `<br><small>Num: ${o.paymentNumber}<br>Paid: ${o.paymentAmount}৳</small>`;
+          paymentDisplay += `<br><small>Num: ${escapeHtml(o.paymentNumber)}<br>Paid: ${o.paymentAmount}৳</small>`;
         }
 
         tbody.innerHTML += `
           <tr>
             <td>${o.id}</td>
-            <td><button class="cust-btn" onclick="showCustomerHistory('${o.userPhone}')">${o.userName}</button></td>
-            <td>${o.userPhone}</td>
+            <td><button class="cust-btn" onclick="showCustomerHistory('${escapeHtml(o.userPhone)}')">${escapeHtml(o.userName)}</button></td>
+            <td>${escapeHtml(o.userPhone)}</td>
             <td>${paymentDisplay}</td>
             <td>${o.total}৳</td>
             <td>
@@ -3956,7 +4192,9 @@
 
     function deleteOrder(orderId) {
       if(confirm('Are you sure you want to delete this order?')) {
+        const delOrder = orders.find(o => o.id === orderId);
         window.remove(window.ref(window.db, 'orders/' + orderId));
+        if (delOrder && delOrder.userPhone) window.remove(window.ref(window.db, 'order_index/' + delOrder.userPhone + '/' + orderId));
       }
     }
 
@@ -3982,7 +4220,7 @@
           <div class="notif-item">
             <div>
               <b>${isReq ? 'Product Request' : 'New Order: ' + n.orderId}</b><br>
-              <small>${n.userName} (${n.userPhone})</small><br>
+              <small>${escapeHtml(n.userName)} (${escapeHtml(n.userPhone)})</small><br>
               <small>${isReq ? 'Msg: ' + n.total : 'Total: ' + n.total + '৳ | ' + n.paymentMethod}</small>
             </div>
             <button class="notif-item-del" onclick="deleteNotification('${n.notifKey}')">Del</button>
@@ -4016,8 +4254,9 @@
       if(!code) return alert("Coupon code required!");
       if(value <= 0) return alert("Discount value must be greater than 0!");
 
-      const couponId = key || ('COUPON-' + code);
-      const existing = coupons.find(c => c.key === couponId) || {};
+      // The key is always COUPON-<CODE> so customers can look a coupon up directly (the coupon list itself is admin-only).
+      const couponId = 'COUPON-' + code;
+      const existing = coupons.find(c => c.key === (key || couponId)) || coupons.find(c => c.key === couponId) || {};
 
       const couponData = {
         key: couponId,
@@ -4036,6 +4275,7 @@
 
       if(window.db) {
         window.set(window.ref(window.db, 'coupons/' + couponId), couponData);
+        if (key && key !== couponId) window.remove(window.ref(window.db, 'coupons/' + key));   // code was renamed
         alert("Coupon saved successfully!");
         resetCouponForm();
       }
@@ -4109,7 +4349,7 @@
     }
 
 
-    /* ================= Shoukhin Agent Management ================= */
+    /* ================= Labonya Prohor Agent Management ================= */
     function escapeAttr(value) {
       return escapeHtml(String(value || '')).replace(/`/g, '&#96;');
     }
@@ -4268,13 +4508,13 @@
       populateAgentSelectors();
     }
 
-    function deleteAgent(refValue) {
+    async function deleteAgent(refValue) {
       const a = getAgentByRef(refValue);
       if (!a) return;
       if (!confirm('Delete agent ' + (a.name || a.id || 'application') + '? This will remove portal access/profile data.')) return;
       const pw = prompt('Enter Admin Password to delete this agent:');
       if (pw === null) return;
-      if (pw !== adminPassword) return alert('Incorrect admin password. Agent was not deleted.');
+      if (!(await window.adminVerify(pw))) return alert('Incorrect admin password. Agent was not deleted.');
       if (!window.db) return;
       if (a.id) coupons.filter(c => c.agentId === a.id).forEach(c => window.update(window.ref(window.db, 'coupons/' + c.key), { agentId: null, agentName: null }));
       window.remove(window.ref(window.db, 'agents/' + getAgentDbKey(a)));
@@ -4286,7 +4526,7 @@
       if (!grid) return;
       populateAgentSelectors();
       if (!agents.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:22px; background:#fff; border-radius:12px;">No Shoukhin Agent applications yet.</div>';
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#888; padding:22px; background:#fff; border-radius:12px;">No Labonya Prohor Agent applications yet.</div>';
         return;
       }
       const sorted = [...agents].sort((a,b) => ((a.id ? 1 : 0) - (b.id ? 1 : 0)) || ((b.createdAt||0)-(a.createdAt||0)));
@@ -4720,10 +4960,10 @@
       const m=document.getElementById('payoutMsg');if(m){m.style.color='#16834b';m.textContent='Payout recorded successfully.';}
     }
 
-    function deleteAgentPayout(id) {
+    async function deleteAgentPayout(id) {
       const pass=prompt('Enter Admin Password to delete this payout:');
       if(pass===null)return;
-      if(pass!==adminPassword)return alert('Incorrect admin password.');
+      if(!(await window.adminVerify(pass)))return alert('Incorrect admin password.');
       if(!confirm('Delete this payout history? The paid amount will be added back to agent due.'))return;
       window.remove(window.ref(window.db,'agentPayouts/'+id));
     }
@@ -4855,7 +5095,7 @@
       if (!confirm('Delete this customer profile? Customer order history will not be deleted.')) return;
       const pw = prompt('Enter Admin Password to delete this customer profile:');
       if (pw === null) return;
-      if (pw !== adminPassword) return alert('Incorrect admin password. Customer profile was not deleted.');
+      if (!(await window.adminVerify(pw))) return alert('Incorrect admin password. Customer profile was not deleted.');
       try {
         await window.remove(window.ref(window.db, 'customer_history/' + phone));
         delete customerDataHistory[phone];
@@ -5047,15 +5287,18 @@
       }
     }
 
-    function changeAdminPassword() {
+    async function changeAdminPassword() {
       const newPass = document.getElementById('newAdminPass').value.trim();
       if(!newPass) return alert("Enter new password!");
-
-      adminPassword = newPass;
-      if(window.db) {
-        window.update(window.ref(window.db, 'settings'), { adminPass: newPass });
+      if(newPass.length < 6) return alert("Password কমপক্ষে ৬ অক্ষরের হতে হবে।");
+      const cur = prompt('বর্তমান Admin Password দিন:');
+      if (cur === null) return;
+      try {
+        await window.adminChangePassword(cur, newPass);
         alert("Admin password updated!");
         document.getElementById('newAdminPass').value = '';
+      } catch (e) {
+        alert(adminAuthErrorMessage(e));
       }
     }
 
@@ -5103,7 +5346,7 @@
           if(!sessionStorage.getItem('visited')) {
             count++;
             sessionStorage.setItem('visited', 'true');
-            window.set(vRef, count);
+            window.set(vRef, window.increment(1));
           }
           if(document.getElementById('visitorCount')) {
             document.getElementById('visitorCount').innerText = count;
@@ -5137,16 +5380,16 @@
 
       let couponRowMemo = '';
       if(o.couponCode && o.couponCode !== 'N/A' && o.couponDiscount > 0) {
-        couponRowMemo = `<p><b>Coupon Discount (${o.couponCode}):</b> -${o.couponDiscount} ৳</p>`;
+        couponRowMemo = `<p><b>Coupon Discount (${escapeHtml(o.couponCode)}):</b> -${o.couponDiscount} ৳</p>`;
       }
 
       const memoHtml = `
         <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:13px;">
           <div>
             <p><b>Order ID:</b> ${o.id}</p>
-            <p><b>Customer Name:</b> ${o.userName}</p>
-            <p><b>Phone:</b> ${o.userPhone}</p>
-            <p><b>Address:</b> ${o.address}</p>
+            <p><b>Customer Name:</b> ${escapeHtml(o.userName)}</p>
+            <p><b>Phone:</b> ${escapeHtml(o.userPhone)}</p>
+            <p><b>Address:</b> ${escapeHtml(o.address)}</p>
           </div>
           <div style="text-align:right;">
             <p><b>Date:</b> ${o.date}</p>
@@ -5200,18 +5443,76 @@ const SHOUKHIN_VAPID_KEY = "BPd7dsoetnhWWoSnxB9YKT0184S5WjVYnVIS2J9QMUjZZC-X5vGY
     const reg = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
     if (Notification.permission === 'default') await Notification.requestPermission();
     if (Notification.permission !== 'granted') return;
+    const app = window.app, db = window.db, set = window.set, ref = window.ref;
     const messaging = getMessaging(app);
     const token = await getToken(messaging, {vapidKey:SHOUKHIN_VAPID_KEY,serviceWorkerRegistration:reg});
     if (!token) return;
+    await window.whenAuthReady();                       // admin token is saved only after admin sign-in
+    if (!window.fbAuth.currentUser) return;
     const id = 'admin-' + (localStorage.getItem('shoukhinPushId') || crypto.randomUUID());
     localStorage.setItem('shoukhinPushId', id.replace(/^[^-]+-/,'') || id);
     await set(ref(db, 'admin_fcm_tokens/' + encodeURIComponent(id)), {token,updatedAt:Date.now()});
     onMessage(messaging, payload => {
       const n=payload.notification||{};
-      if (Notification.permission==='granted' && document.visibilityState==='visible') new Notification(n.title||'Shoukhin', {body:n.body||'',icon:n.icon||'/favicon.ico',data:payload.data||{}});
+      if (Notification.permission==='granted' && document.visibilityState==='visible') new Notification(n.title||'Labonya Prohor', {body:n.body||'',icon:n.icon||'/favicon.ico',data:payload.data||{}});
     });
   } catch(e) { console.warn('FCM registration failed',e); }
 })();
+</script>
+
+<script>
+/* Labonya Prohor: live canvas animation (drifting petals + sparkles) and shop-logo loader */
+(function () {
+  var FALLBACK = "https://ourdestination.github.io/shoukhin/favicon.png", KEY = "lpShopLogo";
+  window.lpCachedLogo = function () { try { return localStorage.getItem(KEY) || FALLBACK; } catch (e) { return FALLBACK; } };
+  window.lpLiveLogo = function (imgs) {                       // show cached logo now, then the live one from the database
+    var set = function (u) { imgs.forEach(function (i) { if (i && i.src !== u) i.src = u; }); };
+    set(window.lpCachedLogo());
+    var n = 0, t = setInterval(function () {
+      if (++n > 60) return clearInterval(t);
+      if (!(window.db && window.ref && window.onValue)) return;
+      clearInterval(t);
+      try { window.onValue(window.ref(window.db, "settings/logo"), function (s) {
+        var u = s.val(); if (!u || typeof u !== "string") return;
+        try { localStorage.setItem(KEY, u); } catch (e) {}
+        set(u);
+      }, function () {}); } catch (e) {}
+    }, 150);
+  };
+  window.lpAnimate = function (canvas, o) {
+    var ctx = canvas.getContext("2d"), W = 0, H = 0, P = [], dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cols = o.colors, N = o.count || 46;
+    function size() { W = canvas.clientWidth; H = canvas.clientHeight; canvas.width = W * dpr; canvas.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    function mk(init) { return { x: Math.random() * W, y: init ? Math.random() * H : H + 20, r: 4 + Math.random() * 11, vy: 0.35 + Math.random() * 0.9, ph: Math.random() * 6.28, sw: 0.6 + Math.random() * 1.2,
+      rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.04, c: cols[(Math.random() * cols.length) | 0], star: Math.random() < 0.3, a: 0.35 + Math.random() * 0.5 }; }
+    size(); for (var i = 0; i < N; i++) P.push(mk(true));
+    window.addEventListener("resize", size);
+    function petal(p) { ctx.beginPath(); ctx.moveTo(0, -p.r); ctx.bezierCurveTo(p.r * 0.9, -p.r * 0.5, p.r * 0.7, p.r * 0.7, 0, p.r); ctx.bezierCurveTo(-p.r * 0.7, p.r * 0.7, -p.r * 0.9, -p.r * 0.5, 0, -p.r); ctx.fill(); }
+    function star(p) { var r = p.r * 0.7; ctx.beginPath(); for (var k = 0; k < 8; k++) { var rr = k % 2 ? r * 0.28 : r, a = k * Math.PI / 4; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } ctx.closePath(); ctx.fill(); }
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, last = performance.now();
+    function frame(now) {
+      if (!canvas.isConnected || (o.stop && o.stop())) return;
+      if (o.pause && o.pause()) { last = now; return requestAnimationFrame(frame); }
+      var dt = Math.min(40, now - last) / 16.7; last = now;
+      ctx.clearRect(0, 0, W, H);
+      if (o.glow) { var g = ctx.createRadialGradient(W / 2, H * 0.4, 10, W / 2, H * 0.4, Math.max(W, H) * 0.6); g.addColorStop(0, o.glow); g.addColorStop(1, "rgba(255,255,255,0)"); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+      for (var i = 0; i < P.length; i++) {
+        var p = P[i]; if (!reduce) { p.y -= p.vy * dt; p.ph += 0.02 * dt; p.x += Math.sin(p.ph) * p.sw * dt; p.rot += p.vr * dt; }
+        if (p.y < -30) P[i] = mk(false);
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.globalAlpha = p.a * (p.star ? (0.6 + 0.4 * Math.sin(p.ph * 3)) : 1); ctx.fillStyle = p.c;
+        if (p.star) star(p); else petal(p); ctx.restore();
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+})();
+</script>
+<script>
+  (function () {
+    var g = document.getElementById('adminLoginGate');
+    lpLiveLogo([document.getElementById('gateLogo')]);
+  })();
 </script>
 </body>
 </html>
