@@ -213,6 +213,18 @@
 
     .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--dark); display: flex; align-items: center; justify-content: space-between; }
     
+    /* ===== Country sections ===== */
+    .category-card { position: relative; }
+    .category-flag { position: absolute; top: 6px; right: 6px; z-index: 2; background: rgba(255,255,255,.92); padding: 3px 4px; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,.2); display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .variant-flag { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; padding-left: 4px; }
+    .country-bar { display: flex; gap: 10px; flex-wrap: nowrap; margin: 14px 0 6px; }
+    .country-btn { white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 30px; border: 2px solid #f3c1d3; background: #fff; color: var(--dark, #333); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all .2s; }
+    .country-btn i { color: var(--primary); font-size: 1.05rem; }
+    .country-btn:hover { border-color: var(--primary); }
+    .country-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(233,30,99,.3); }
+    .country-btn.active i { color: #fff; }
+    @media (max-width: 768px) { .country-bar { gap: 6px; } .country-btn { flex: 1 1 0; min-width: 0; justify-content: center; padding: 7px 4px; font-size: 0.74rem; gap: 4px; } .country-btn svg { width: 20px; height: 13px; } }
+
     .category-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -679,6 +691,13 @@
       <div id="comboOfferList" style="margin-top:15px;"></div>
     </div>
 
+    <!-- Country Section -->
+    <div class="country-bar" id="countryBar">
+      <button type="button" class="country-btn active" data-country="Bangladeshi" onclick="selectCountry('Bangladeshi')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#006a4e"/><circle cx="13" cy="10" r="5.6" fill="#f42a41"/></svg><span>Bangladeshi</span></button>
+      <button type="button" class="country-btn" data-country="Indian" onclick="selectCountry('Indian')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="6.67" fill="#ff9933"/><rect y="6.67" width="30" height="6.66" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.4" fill="none" stroke="#000080" stroke-width=".6"/></svg><span>Indian</span></button>
+      <button type="button" class="country-btn" data-country="Global" onclick="selectCountry('Global')"><i class="fa-solid fa-earth-americas"></i><span>Global</span></button>
+    </div>
+
     <!-- Category Section -->
     <div class="section-title">
       <span><i class="fa-solid fa-layer-group" style="color: var(--primary);"></i> Categories</span>
@@ -727,6 +746,11 @@
         <form id="addProductForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <input type="text" id="pName" placeholder="Product Name" required>
           <select id="pCategory" required><option value="">Select Category</option></select>
+          <select id="pCountry" required title="Country section">
+            <option value="Bangladeshi">Bangladeshi</option>
+            <option value="Indian">Indian</option>
+            <option value="Global">Global</option>
+          </select>
           <input type="number" id="pBuyPrice" placeholder="Buying Price (BDT)" required>
           <input type="number" id="pPrice" placeholder="Regular Price (BDT)" required>
           <input type="number" id="pDiscountPrice" placeholder="Discount Price (BDT) (Optional)">
@@ -1445,6 +1469,12 @@
       <input type="text" id="editPName" required>
       <label style="font-size:12px; font-weight:bold;">Category:</label>
       <select id="editPCategory" required></select>
+      <label style="font-size:12px; font-weight:bold;">Country Section:</label>
+      <select id="editPCountry">
+        <option value="Bangladeshi">Bangladeshi</option>
+        <option value="Indian">Indian</option>
+        <option value="Global">Global</option>
+      </select>
       <label style="font-size:12px; font-weight:bold;">Buying Price (BDT):</label>
       <input type="number" id="editPBuyPrice" required>
       <label style="font-size:12px; font-weight:bold;">Regular Price (BDT):</label>
@@ -1672,6 +1702,34 @@
       { name: "Haircare", img: "https://via.placeholder.com/100?text=Haircare" }
     ];
     let selectedCategory = "All";
+
+    // ===== Country sections (Bangladeshi / Indian / Global) =====
+    // Products without a saved country (all older products) are treated as Bangladeshi.
+    let selectedCountry = 'Bangladeshi';
+    const COUNTRY_FLAGS = {
+      Bangladeshi: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="20" fill="#006a4e"/><circle cx="13" cy="10" r="5.6" fill="#f42a41"/></svg>',
+      Indian: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="6.67" fill="#ff9933"/><rect y="6.67" width="30" height="6.66" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.4" fill="none" stroke="#000080" stroke-width=".6"/></svg>',
+      Global: '<i class="fa-solid fa-earth-americas" style="color:#e91e63;font-size:15px;line-height:15px;display:block"></i>'
+    };
+    function countryFlagHtml(country) { return COUNTRY_FLAGS[country] || COUNTRY_FLAGS.Bangladeshi; }
+    function categoryFlagBadge() { return '<span class="category-flag">' + countryFlagHtml(selectedCountry) + '</span>'; }
+    function getProductCountry(p) { return (p && p.country) ? p.country : 'Bangladeshi'; }
+    function countryProducts() { return products.filter(p => getProductCountry(p) === selectedCountry); }
+    function selectCountry(country) {
+      selectedCountry = country;
+      selectedCategory = 'All';
+      document.querySelectorAll('#countryBar .country-btn').forEach(b => b.classList.toggle('active', b.dataset.country === country));
+      const t = document.getElementById('currentCategoryTitle');
+      if (t) t.innerText = country + ' Products';
+      // reset the search quietly (do NOT focus / jump to the search bar)
+      const _si = document.getElementById('productSearchInput'); if (_si) _si.value = '';
+      if (typeof productSearchQuery !== 'undefined') productSearchQuery = '';
+      const _sb = document.getElementById('productSearchSuggest'); if (_sb) { _sb.style.display = 'none'; _sb.innerHTML = ''; }
+      const _sc = document.getElementById('productSearchClear'); if (_sc) _sc.style.display = 'none';
+      renderCategories();
+      renderProducts();
+    }
+
     let cart = [];
     let orders = [];
     let customerDataHistory = {}; 
@@ -2394,21 +2452,22 @@
 
       catContainer.innerHTML += `
         <div class="category-card ${allActive}" onclick="selectCategory('All')">
-          <img src="${shopLogoSrc}" class="category-img" alt="All Products" loading="lazy">
+          ${categoryFlagBadge()}<img src="${shopLogoSrc}" class="category-img" alt="All Products" loading="lazy">
           <span class="category-name">All Products</span>
-          <span class="category-count">${products.length} items</span>
+          <span class="category-count">${countryProducts().length} items</span>
         </div>
       `;
 
       categories.forEach((cat, idx) => {
         const catName = typeof cat === 'string' ? cat : cat.name;
         const catImg = (typeof cat === 'object' && cat.img) ? cat.img : 'https://via.placeholder.com/100?text=' + catName;
-        const count = products.filter(p => p.category === catName).length;
+        const totalCount = products.filter(p => p.category === catName).length;
+        const count = countryProducts().filter(p => p.category === catName).length;
         const isActive = selectedCategory === catName ? 'active' : '';
 
         catContainer.innerHTML += `
           <div class="category-card ${isActive}" onclick="selectCategory('${catName}')">
-            <img src="${catImg}" class="category-img" alt="${catName}" loading="lazy">
+            ${categoryFlagBadge()}<img src="${catImg}" class="category-img" alt="${catName}" loading="lazy">
             <span class="category-name">${catName}</span>
             <span class="category-count">${count} items</span>
           </div>
@@ -2423,7 +2482,7 @@
               <td style="text-align:center; color:#888;"><i class="fa-solid fa-grip-lines"></i></td>
               <td><img src="${catImg}" width="40" height="40" style="object-fit:cover; border-radius:0; cursor:pointer;" onclick="showFullImage('${catImg}')"></td>
               <td><b>${catName}</b></td>
-              <td>${count} Products</td>
+              <td>${totalCount} Products</td>
               <td>
                 <button onclick="openEditCategoryModal(${idx})" style="background:#007bff; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer; margin-right:4px;">Edit</button>
                 <button onclick="deleteCategory(${idx})" style="background:red; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">Delete</button>
@@ -2519,7 +2578,7 @@
       grid.innerHTML = '';
       offerGrid.innerHTML = '';
 
-      const filtered = selectedCategory === 'All' ? products : products.filter(p => p.category === selectedCategory);
+      const filtered = selectedCategory === 'All' ? countryProducts() : countryProducts().filter(p => p.category === selectedCategory);
       const offerProducts = products.filter(p => isOfferActive(p));
       const activeCombos = comboOffers.filter(c => isComboActive(c));
 
@@ -2571,10 +2630,11 @@
       let sizesText = p.sizes && p.sizes.length > 0 ? p.sizes.join(', ') : '';
 
       let variantHtml = '';
-      if(colorsText || sizesText) {
+      {
         variantHtml = `<div class="variant-details">`;
         if(colorsText) variantHtml += `<span class="variant-tag">Color: ${colorsText}</span>`;
         if(sizesText) variantHtml += `<span class="variant-tag">Size: ${sizesText}</span>`;
+        variantHtml += `<span class="variant-flag" title="${getProductCountry(p)}">${countryFlagHtml(getProductCountry(p))}</span>`;
         variantHtml += `</div>`;
       }
 
@@ -3808,6 +3868,7 @@
         id: pId,
         name: document.getElementById('pName').value,
         category: document.getElementById('pCategory').value,
+        country: document.getElementById('pCountry').value || 'Bangladeshi',
         buyPrice: Number(document.getElementById('pBuyPrice').value) || 0,
         price: Number(document.getElementById('pPrice').value),
         discountPrice: Number(document.getElementById('pDiscountPrice').value) || 0,
@@ -3932,6 +3993,7 @@
 
       document.getElementById('editPId').value = p.id;
       document.getElementById('editPName').value = p.name;
+      document.getElementById('editPCountry').value = getProductCountry(p);
       document.getElementById('editPBuyPrice').value = p.buyPrice || 0;
       document.getElementById('editPPrice').value = p.price;
       document.getElementById('editPDiscountPrice').value = p.discountPrice || '';
@@ -3982,6 +4044,7 @@
       const updateData = {
         name: document.getElementById('editPName').value,
         category: document.getElementById('editPCategory').value,
+        country: document.getElementById('editPCountry').value || 'Bangladeshi',
         buyPrice: Number(document.getElementById('editPBuyPrice').value) || 0,
         price: Number(document.getElementById('editPPrice').value),
         discountPrice: Number(document.getElementById('editPDiscountPrice').value) || 0,
