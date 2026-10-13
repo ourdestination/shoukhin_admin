@@ -35,7 +35,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@300;400;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Hind+Siliguri:wght@600&family=Montserrat:wght@600&family=Poppins:wght@300;400;600;700&display=swap">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
@@ -176,6 +176,35 @@
     }
     .nav-btns button:hover { background: var(--accent); color: white; transform: translateY(-2px); }
 
+    /* ===== Notice bell (header) + notice popup ===== */
+    .nav-btns button.notice-bell { padding: 6px 11px; }
+    .notice-bell i { display: inline-block; transform-origin: 50% 0; }
+    .notice-dot { display: none; position: absolute; top: -2px; right: -2px; width: 11px; height: 11px; border-radius: 50%; background: #ff1744; border: 2px solid #fff; animation: noticeDotPulse 1.5s infinite; }
+    .notice-bell.has-new .notice-dot { display: block; }
+    .notice-bell.ring i { animation: noticeRing 2.4s ease-in-out infinite; }
+    @keyframes noticeRing { 0%, 55%, 100% { transform: rotate(0); } 6% { transform: rotate(16deg); } 12% { transform: rotate(-14deg); } 18% { transform: rotate(10deg); } 24% { transform: rotate(-8deg); } 30% { transform: rotate(4deg); } 36% { transform: rotate(0); } }
+    @keyframes noticeDotPulse { 0% { box-shadow: 0 0 0 0 rgba(255,23,68,.6); } 70% { box-shadow: 0 0 0 7px rgba(255,23,68,0); } 100% { box-shadow: 0 0 0 0 rgba(255,23,68,0); } }
+    #noticeModal { z-index: 2800; }
+    #noticeModal .modal-content { max-width: 440px; border-radius: 18px; animation: noticePop .35s cubic-bezier(.2,.9,.3,1.3); }
+    @keyframes noticePop { from { opacity: 0; transform: scale(.86) translateY(12px); } to { opacity: 1; transform: none; } }
+    .notice-view { text-align: center; padding: 8px 2px 0; }
+    .notice-icon { width: 64px; height: 64px; margin: 0 auto 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.7rem; color: #fff; background: linear-gradient(135deg, #e91e63, #9c27b0); box-shadow: 0 6px 16px rgba(233,30,99,.35); }
+    .notice-icon i { display: inline-block; transform-origin: 50% 0; animation: noticeRing 2.4s ease-in-out infinite; }
+    .notice-title { font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .notice-text { white-space: pre-wrap; word-break: break-word; font-size: .98rem; line-height: 1.65; color: var(--dark); background: #fff7fb; border: 1px solid #f3c2d8; border-radius: 12px; padding: 12px 14px; }
+    .notice-time { font-size: .75rem; color: #888; margin: 8px 0 2px; }
+    #noticeBody { max-height: 50vh; overflow-y: auto; padding: 2px; }
+    .notice-item { margin-bottom: 12px; }
+    .notice-item.latest .notice-text { border-color: #e91e63; box-shadow: 0 2px 10px rgba(233,30,99,.15); }
+    .notice-admin-item { position: relative; background: #fff; border: 1px solid #f3c2d8; border-radius: 10px; padding: 12px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+    .notice-live-pill { position: absolute; top: 10px; right: 10px; background: linear-gradient(45deg, #e91e63, #9c27b0); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; letter-spacing: .5px; }
+    .notice-admin-text { white-space: pre-wrap; word-break: break-word; font-size: .92rem; line-height: 1.55; padding-right: 58px; }
+    .notice-admin-meta { font-size: 11px; color: #888; margin-top: 6px; }
+    .notice-admin-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .notice-admin-actions button { flex: 1; border: none; border-radius: 6px; padding: 7px; font-size: .82rem; font-weight: 600; cursor: pointer; background: #e8f0fe; color: #1a56c4; }
+    .notice-admin-actions button.del { background: #fdecea; color: #c62828; }
+    @media (prefers-reduced-motion: reduce) { .notice-bell.ring i, .notice-icon i, .notice-dot, #noticeModal .modal-content { animation: none; } }
+
     .notif-badge {
       position: absolute; top: -5px; right: -5px; background: red; color: white;
       border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold;
@@ -201,7 +230,7 @@
 
     .hero {
       text-align: center; padding: 25px 15px; background: rgba(255,255,255,0.6);
-      backdrop-filter: blur(5px); margin: 15px; border-radius: 15px; animation: fadeIn 1s ease-in;
+      backdrop-filter: blur(5px); margin: 15px 15px 0; border-radius: 15px; animation: fadeIn 1s ease-in;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
     }
     .hero-logo-img { width: 100%; max-width: 720px; aspect-ratio: 4 / 1; height: auto; border-radius: 12px; object-fit: cover; border: none; cursor: pointer; }
@@ -209,7 +238,7 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-    .container { padding: 15px 4%; flex: 1; }
+    .container { padding: 4px 4% 15px; flex: 1; }
 
     .section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--dark); display: flex; align-items: center; justify-content: space-between; }
     
@@ -217,13 +246,14 @@
     .category-card { position: relative; }
     .category-flag { position: absolute; top: 6px; right: 6px; z-index: 2; background: rgba(255,255,255,.92); padding: 3px 4px; border-radius: 5px; box-shadow: 0 1px 4px rgba(0,0,0,.2); display: flex; align-items: center; justify-content: center; pointer-events: none; }
     .variant-flag { margin-left: auto; flex-shrink: 0; display: flex; align-items: center; padding-left: 4px; }
-    .country-bar { display: flex; gap: 10px; flex-wrap: nowrap; margin: 14px 0 6px; }
+    .country-bar { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 6px; }
+    .offer-banner #offerProductGrid:empty, .offer-banner #comboOfferList:empty { display: none; }
     .country-btn { white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 30px; border: 2px solid #f3c1d3; background: #fff; color: var(--dark, #333); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 0.88rem; cursor: pointer; transition: all .2s; }
     .country-btn i { color: var(--primary); font-size: 1.05rem; }
     .country-btn:hover { border-color: var(--primary); }
     .country-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(233,30,99,.3); }
     .country-btn.active i { color: #fff; }
-    @media (max-width: 768px) { .country-bar { gap: 6px; } .country-btn { flex: 1 1 0; min-width: 0; justify-content: center; padding: 7px 4px; font-size: 0.74rem; gap: 4px; } .country-btn svg { width: 20px; height: 13px; } }
+    @media (max-width: 768px) { .country-bar { gap: 6px; } .country-btn { flex: 1 1 calc(33.333% - 6px); min-width: 0; justify-content: center; padding: 8px 4px; font-size: 0.8rem; gap: 5px; } .country-btn svg { width: 20px; height: 13px; } }
 
     .category-grid {
       display: grid;
@@ -274,12 +304,33 @@
       font-weight: bold; text-transform: uppercase; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       z-index: 11; text-align: center; white-space: nowrap;
     }
+    @font-face { font-family: 'NikoshBAN'; src: local('NikoshBAN'), local('Nikosh BAN'), local('Nikosh'), url('NikoshBAN.ttf') format('truetype'), url('fonts/NikoshBAN.ttf') format('truetype'); font-display: swap; }
     .offer-customer-message {
-      background: rgba(255,255,255,0.9); border: 1px solid rgba(233,30,99,0.25);
-      border-radius: 8px; padding: 9px 0; margin: 0 0 12px 0; color: #6a1b4d;
-      font-size: 0.84rem; line-height: 1.5; text-align: left; overflow: hidden;
-      white-space: nowrap; position: relative;
+      background: linear-gradient(90deg, #fff4f9 0%, #ffffff 50%, #fff4f9 100%);
+      border: 1px solid rgba(233,30,99,0.28); border-radius: 10px; padding: 9px 0; margin: 0 0 6px 0;
+      font-family: 'Montserrat', 'NikoshBAN', 'Hind Siliguri', 'Poppins', sans-serif;
+      font-size: 0.84rem; font-weight: 600; letter-spacing: 0.6px; line-height: 1.5; text-align: left;
+      overflow: hidden; white-space: nowrap; position: relative;
+      box-shadow: 0 2px 12px rgba(233,30,99,0.10), inset 0 0 0 1px rgba(201,162,39,0.18);
+      animation: offerBarGlow 4.5s ease-in-out infinite;
     }
+    .offer-customer-message::after {
+      content: ''; position: absolute; top: 0; left: -40%; width: 30%; height: 100%; pointer-events: none;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.85), transparent);
+      transform: skewX(-18deg); animation: offerBarSheen 6s ease-in-out infinite;
+    }
+    .offer-customer-message .offer-message-text {
+      background: linear-gradient(90deg, #8e1b5c, #e91e63, #b8860b, #e91e63, #8e1b5c);
+      background-size: 220% auto; -webkit-background-clip: text; background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent;
+      animation: offerTextShimmer 7s linear infinite;
+    }
+    .offer-customer-message .offer-message-text::before { content: '\2726\00a0\00a0'; }
+    .offer-customer-message .offer-message-text::after { content: '\00a0\00a0\2726'; }
+    @keyframes offerTextShimmer { from { background-position: 0% 50%; } to { background-position: 220% 50%; } }
+    @keyframes offerBarSheen { 0% { left: -40%; } 55%, 100% { left: 130%; } }
+    @keyframes offerBarGlow { 0%, 100% { box-shadow: 0 2px 12px rgba(233,30,99,0.10), inset 0 0 0 1px rgba(201,162,39,0.18); } 50% { box-shadow: 0 3px 16px rgba(233,30,99,0.22), inset 0 0 0 1px rgba(201,162,39,0.35); } }
+    @media (prefers-reduced-motion: reduce) { .offer-customer-message, .offer-customer-message::after, .offer-customer-message .offer-message-text { animation: none; } }
     .offer-customer-message .offer-message-track {
       display: inline-block; min-width: 100%; padding-left: 100%; box-sizing: content-box;
       animation: offerMessageScroll 30s linear infinite; will-change: transform;
@@ -302,7 +353,7 @@
     .combo-tabs-content { position: relative; }
 
     .offer-banner {
-      display: none; margin-bottom: 25px; padding: 16px 16px 18px;
+      display: none; margin-bottom: 6px; padding: 16px 16px 18px;
       background: linear-gradient(120deg, #fff0f5 0%, #fce4ec 45%, #f3e5f5 100%);
       border-radius: 18px; border: 1px solid rgba(233,30,99,0.18);
       box-shadow: 0 8px 24px rgba(233,30,99,0.1); position: relative; overflow: hidden;
@@ -569,10 +620,10 @@
       #siteTitle { font-size: 0.95rem; }
       .logo-img { width: 35px; height: 35px; }
       .nav-btns button { padding: 5px 8px; font-size: 0.75rem; }
-      .hero { margin: 10px 5px; padding: 18px 10px; }
+      .hero { margin: 10px 5px 0; padding: 18px 10px; }
       .hero h1 { font-size: 1.5rem; }
       .hero-logo-img { width: 100%; max-width: 100%; aspect-ratio: 4 / 1; height: auto; }
-      .container { padding: 10px 3%; }
+      .container { padding: 4px 3% 10px; }
       .category-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .category-card { padding: 0 0 6px 0; }
       .category-name { font-size: 0.78rem; }
@@ -663,6 +714,7 @@
       </div>
     </div>
     <div class="nav-btns">
+      <button id="noticeBellBtn" class="notice-bell" onclick="openAdminNoticeTab()" title="Notice" aria-label="Notice"><i class="fa-solid fa-bell"></i><span class="notice-dot"></span></button>
       <button id="notifBtnLegacy" onclick="openNotifModal()" style="display:none;">
         <i class="fa-solid fa-bell"></i> Notification
         <span id="notifCountLegacy" class="notif-badge">0</span>
@@ -693,9 +745,11 @@
 
     <!-- Country Section -->
     <div class="country-bar" id="countryBar">
-      <button type="button" class="country-btn active" data-country="Bangladeshi" onclick="selectCountry('Bangladeshi')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#006a4e"/><circle cx="13" cy="10" r="5.6" fill="#f42a41"/></svg><span>Bangladeshi</span></button>
       <button type="button" class="country-btn" data-country="Indian" onclick="selectCountry('Indian')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="6.67" fill="#ff9933"/><rect y="6.67" width="30" height="6.66" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.4" fill="none" stroke="#000080" stroke-width=".6"/></svg><span>Indian</span></button>
-      <button type="button" class="country-btn" data-country="Global" onclick="selectCountry('Global')"><i class="fa-solid fa-earth-americas"></i><span>Global</span></button>
+      <button type="button" class="country-btn" data-country="Thailand" onclick="selectCountry('Thailand')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#a51931"/><rect y="3.33" width="30" height="13.34" fill="#f4f5f8"/><rect y="6.67" width="30" height="6.66" fill="#2d2a4a"/></svg><span>Thailand</span></button>
+      <button type="button" class="country-btn" data-country="Korean" onclick="selectCountry('Korean')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#fff"/><path d="M11.4 10A3.6 3.6 0 0 1 18.6 10Z" fill="#cd2e3a"/><path d="M18.6 10A3.6 3.6 0 0 1 11.4 10Z" fill="#0047a0"/><circle cx="13.2" cy="10" r="1.8" fill="#cd2e3a"/><circle cx="16.8" cy="10" r="1.8" fill="#0047a0"/><g transform="translate(6.2 4.6) rotate(-34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(23.8 4.6) rotate(34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(6.2 15.4) rotate(34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(23.8 15.4) rotate(-34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g></svg><span>Korean</span></button>
+      <button type="button" class="country-btn active" data-country="Bangladeshi" onclick="selectCountry('Bangladeshi')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#006a4e"/><circle cx="13" cy="10" r="5.6" fill="#f42a41"/></svg><span>Bangladeshi</span></button>
+      <button type="button" class="country-btn" data-country="Chinese" onclick="selectCountry('Chinese')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#de2910"/><polygon points="5.00,2.00 5.68,4.07 7.85,4.07 6.09,5.36 6.76,7.43 5.00,6.15 3.24,7.43 3.91,5.36 2.15,4.07 4.32,4.07" fill="#ffde00"/><polygon points="9.14,2.51 9.62,1.97 9.25,1.34 9.91,1.63 10.39,1.08 10.33,1.80 11.00,2.09 10.29,2.25 10.22,2.97 9.85,2.35" fill="#ffde00"/><polygon points="11.01,4.14 11.66,3.82 11.56,3.10 12.07,3.63 12.72,3.30 12.38,3.95 12.88,4.47 12.17,4.34 11.83,4.99 11.73,4.26" fill="#ffde00"/><polygon points="11.04,6.73 11.77,6.70 11.96,6.00 12.21,6.68 12.94,6.66 12.37,7.10 12.62,7.79 12.01,7.38 11.44,7.83 11.64,7.13" fill="#ffde00"/><polygon points="9.22,8.38 9.90,8.63 10.35,8.06 10.32,8.79 11.00,9.05 10.30,9.24 10.26,9.96 9.87,9.36 9.16,9.55 9.62,8.98" fill="#ffde00"/></svg><span>Chinese</span></button>
     </div>
 
     <!-- Category Section -->
@@ -731,6 +785,7 @@
         <button class="admin-tab" data-tab="cTab" onclick="switchAdminTab('cTab', this)">Categories</button>
         <button class="admin-tab" data-tab="oTab" onclick="switchAdminTab('oTab', this)">Orders</button>
         <button class="admin-tab" data-tab="offTab" onclick="switchAdminTab('offTab', this)">Offer Management</button>
+        <button class="admin-tab" data-tab="noticeTab" onclick="switchAdminTab('noticeTab', this)">Notice</button>
         <button class="admin-tab" data-tab="couponTab" onclick="switchAdminTab('couponTab', this)">Coupon Management</button>
         <button class="admin-tab" data-tab="agentTab" onclick="switchAdminTab('agentTab', this)">Labonya Prohor Agent</button>
         <button class="admin-tab" data-tab="incomeTab" onclick="switchAdminTab('incomeTab', this)">Income</button>
@@ -747,9 +802,11 @@
           <input type="text" id="pName" placeholder="Product Name" required>
           <select id="pCategory" required><option value="">Select Category</option></select>
           <select id="pCountry" required title="Country section">
-            <option value="Bangladeshi">Bangladeshi</option>
             <option value="Indian">Indian</option>
-            <option value="Global">Global</option>
+            <option value="Thailand">Thailand</option>
+            <option value="Korean">Korean</option>
+            <option value="Bangladeshi" selected>Bangladeshi</option>
+            <option value="Chinese">Chinese</option>
           </select>
           <input type="number" id="pBuyPrice" placeholder="Buying Price (BDT)" required>
           <input type="number" id="pPrice" placeholder="Regular Price (BDT)" required>
@@ -890,6 +947,28 @@
       </div>
 
       <!-- NEW: Coupon Management Tab -->
+      <!-- Website Notice Tab -->
+      <div id="noticeTab" class="tab-content">
+        <h3><i class="fa-solid fa-bell"></i> Website Notice</h3>
+        <p style="font-size:12px; color:#777; margin:4px 0 12px;">এখানে notice publish করলে Website-এর সব customer-এর কাছে sound সহ popup চলে যাবে এবং header-এর bell-এ থাকবে। যেকোনো notice Edit বা Delete করা যাবে।</p>
+
+        <div style="background:#fff7fb; padding:12px; border:1px solid #f3c2d8; border-radius:8px;">
+          <h4 id="noticeFormTitle"><i class="fa-solid fa-pen-to-square"></i> Publish New Notice</h4>
+          <input type="hidden" id="noticeEditKey" value="">
+          <textarea id="adminNoticeInput" rows="4" maxlength="500" oninput="updateAdminNoticeCount()" placeholder="Notice লিখুন..." style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; font-size:14px; margin-top:8px;"></textarea>
+          <div style="font-size:11px; color:#888; text-align:right;"><span id="adminNoticeCount">0</span>/500</div>
+          <label id="noticeRenotifyWrap" style="display:none; font-size:12px; margin:6px 0 2px;"><input type="checkbox" id="noticeRenotify" style="width:auto; margin-right:6px;">Edit-এর পর customer-দের আবার sound সহ জানান</label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+            <button type="button" id="noticePublishBtn" class="form-btn" style="flex:2; min-width:140px; margin-top:0;" onclick="publishSiteNotice()"><i class="fa-solid fa-paper-plane"></i> Publish Notice</button>
+            <button type="button" id="noticeCancelBtn" class="form-btn" style="display:none; flex:1; background:#6c757d; margin-top:0;" onclick="cancelNoticeEdit()">Cancel</button>
+            <button type="button" class="form-btn" style="flex:1; min-width:110px; background:#6c757d; margin-top:0;" onclick="playNoticeChime()"><i class="fa-solid fa-volume-high"></i> Test Sound</button>
+          </div>
+        </div>
+
+        <h4 style="margin:18px 0 8px;"><i class="fa-solid fa-list"></i> Published Notices (<span id="noticeCountLabel">0</span>)</h4>
+        <div id="adminNoticeList"></div>
+      </div>
+
       <div id="couponTab" class="tab-content">
         <h3><i class="fa-solid fa-ticket"></i> Coupon Management</h3>
         
@@ -1251,6 +1330,7 @@
       <div class="admin-more-list">
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('cTab');"><i class="fa-solid fa-layer-group"></i> Categories</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('offTab');"><i class="fa-solid fa-fire"></i> Offer Management</button>
+        <button onclick="closeModal('adminMoreModal'); goToAdminTab('noticeTab');"><i class="fa-solid fa-bell"></i> Notice</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('couponTab');"><i class="fa-solid fa-tags"></i> Coupon Management</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('agentTab');"><i class="fa-solid fa-user-tie"></i> Labonya Prohor Agent</button>
         <button onclick="closeModal('adminMoreModal'); goToAdminTab('sTab');"><i class="fa-solid fa-gear"></i> Website Settings</button>
@@ -1471,9 +1551,11 @@
       <select id="editPCategory" required></select>
       <label style="font-size:12px; font-weight:bold;">Country Section:</label>
       <select id="editPCountry">
-        <option value="Bangladeshi">Bangladeshi</option>
         <option value="Indian">Indian</option>
-        <option value="Global">Global</option>
+        <option value="Thailand">Thailand</option>
+        <option value="Korean">Korean</option>
+        <option value="Bangladeshi">Bangladeshi</option>
+        <option value="Chinese">Chinese</option>
       </select>
       <label style="font-size:12px; font-weight:bold;">Buying Price (BDT):</label>
       <input type="number" id="editPBuyPrice" required>
@@ -1703,13 +1785,15 @@
     ];
     let selectedCategory = "All";
 
-    // ===== Country sections (Bangladeshi / Indian / Global) =====
+    // ===== Country sections (Bangladeshi / Indian / Thailand / Korean / Chinese) =====
     // Products without a saved country (all older products) are treated as Bangladeshi.
     let selectedCountry = 'Bangladeshi';
     const COUNTRY_FLAGS = {
       Bangladeshi: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="20" fill="#006a4e"/><circle cx="13" cy="10" r="5.6" fill="#f42a41"/></svg>',
       Indian: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="6.67" fill="#ff9933"/><rect y="6.67" width="30" height="6.66" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.4" fill="none" stroke="#000080" stroke-width=".6"/></svg>',
-      Global: '<i class="fa-solid fa-earth-americas" style="color:#e91e63;font-size:15px;line-height:15px;display:block"></i>'
+      Thailand: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="20" fill="#a51931"/><rect y="3.33" width="30" height="13.34" fill="#f4f5f8"/><rect y="6.67" width="30" height="6.66" fill="#2d2a4a"/></svg>',
+      Korean: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="20" fill="#fff"/><path d="M11.4 10A3.6 3.6 0 0 1 18.6 10Z" fill="#cd2e3a"/><path d="M18.6 10A3.6 3.6 0 0 1 11.4 10Z" fill="#0047a0"/><circle cx="13.2" cy="10" r="1.8" fill="#cd2e3a"/><circle cx="16.8" cy="10" r="1.8" fill="#0047a0"/><g transform="translate(6.2 4.6) rotate(-34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(23.8 4.6) rotate(34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(6.2 15.4) rotate(34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(23.8 15.4) rotate(-34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g></svg>',
+      Chinese: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="20" fill="#de2910"/><polygon points="5.00,2.00 5.68,4.07 7.85,4.07 6.09,5.36 6.76,7.43 5.00,6.15 3.24,7.43 3.91,5.36 2.15,4.07 4.32,4.07" fill="#ffde00"/><polygon points="9.14,2.51 9.62,1.97 9.25,1.34 9.91,1.63 10.39,1.08 10.33,1.80 11.00,2.09 10.29,2.25 10.22,2.97 9.85,2.35" fill="#ffde00"/><polygon points="11.01,4.14 11.66,3.82 11.56,3.10 12.07,3.63 12.72,3.30 12.38,3.95 12.88,4.47 12.17,4.34 11.83,4.99 11.73,4.26" fill="#ffde00"/><polygon points="11.04,6.73 11.77,6.70 11.96,6.00 12.21,6.68 12.94,6.66 12.37,7.10 12.62,7.79 12.01,7.38 11.44,7.83 11.64,7.13" fill="#ffde00"/><polygon points="9.22,8.38 9.90,8.63 10.35,8.06 10.32,8.79 11.00,9.05 10.30,9.24 10.26,9.96 9.87,9.36 9.16,9.55 9.62,8.98" fill="#ffde00"/></svg>'
     };
     function countryFlagHtml(country) { return COUNTRY_FLAGS[country] || COUNTRY_FLAGS.Bangladeshi; }
     function categoryFlagBadge() { return '<span class="category-flag">' + countryFlagHtml(selectedCountry) + '</span>'; }
@@ -2312,6 +2396,7 @@
           const input = document.getElementById('offerCustomerMessageInput');
           if (input) input.value = offerCustomerMessage;
           renderProducts();
+          loadAdminNotices(data);
         });
 
         window.onValue(window.ref(window.db, 'combo_offers'), (snapshot) => {
@@ -2400,6 +2485,149 @@
           }
         });
       }
+    }
+
+    // ===== Notice chime (Web Audio, no sound file needed) =====
+    let noticeAudioCtx = null, noticePendingSound = false;
+    function noticeRingChime(ctx) {
+      try {
+        const base = ctx.currentTime + 0.02;
+        [0, 1.15].forEach(function (round) {
+          [[1046.5, 0], [1318.5, .14], [1568, .28], [2093, .42]].forEach(function (n, idx, arr) {
+            const t = base + round + n[1];
+            const dur = idx === arr.length - 1 ? 1.0 : 0.55;
+            [[n[0], .26], [n[0] * 2, .07]].forEach(function (p) {
+              const o = ctx.createOscillator(), g = ctx.createGain();
+              o.type = 'sine'; o.frequency.setValueAtTime(p[0], t);
+              g.gain.setValueAtTime(0.0001, t);
+              g.gain.exponentialRampToValueAtTime(p[1], t + 0.012);
+              g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+              o.connect(g); g.connect(ctx.destination);
+              o.start(t); o.stop(t + dur + 0.05);
+            });
+          });
+        });
+        if (navigator.vibrate) navigator.vibrate([180, 90, 180]);
+      } catch (e) {}
+    }
+    function playNoticeChime() {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        if (!noticeAudioCtx) noticeAudioCtx = new AC();
+        const ctx = noticeAudioCtx;
+        if (ctx.state === 'running') { noticePendingSound = false; noticeRingChime(ctx); return; }
+        // Browsers block sound until the visitor has touched the page once: play it on the first touch.
+        noticePendingSound = true;
+        ctx.resume().then(function () {
+          if (noticePendingSound && ctx.state === 'running') { noticePendingSound = false; noticeRingChime(ctx); }
+        }).catch(function () {});
+      } catch (e) {}
+    }
+    function noticeUnlockAudio() {
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        if (!noticeAudioCtx) noticeAudioCtx = new AC();
+        if (noticeAudioCtx.state !== 'running') {
+          noticeAudioCtx.resume().then(function () {
+            if (noticePendingSound && noticeAudioCtx.state === 'running') { noticePendingSound = false; noticeRingChime(noticeAudioCtx); }
+          }).catch(function () {});
+        } else if (noticePendingSound) { noticePendingSound = false; noticeRingChime(noticeAudioCtx); }
+      } catch (e) {}
+    }
+    ['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function (ev) { document.addEventListener(ev, noticeUnlockAudio, { passive: true }); });
+    function noticeTimeText(ts) {
+      if (!ts) return '';
+      try { return new Date(ts).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true }); } catch (e) { return ''; }
+    }
+
+    // ===== Website notices (publish / edit / delete) =====
+    let adminNotices = [];
+    function noticePath(key) { return key === '_legacy' ? 'special_offer_settings/siteNotice' : 'special_offer_settings/siteNotices/' + key; }
+    function loadAdminNotices(data) {
+      const arr = [], map = data && data.siteNotices;
+      if (map && typeof map === 'object') Object.keys(map).forEach(function (k) {
+        const n = map[k];
+        if (n && n.text) arr.push({ key: k, text: n.text, ts: Number(n.ts) || 0, editedAt: Number(n.editedAt) || 0 });
+      });
+      const lg = data && data.siteNotice;
+      if (lg && lg.text) arr.push({ key: '_legacy', text: lg.text, ts: Number(lg.ts) || 0, editedAt: 0 });
+      arr.sort(function (a, b) { return b.ts - a.ts; });
+      adminNotices = arr;
+      renderAdminNoticeList();
+    }
+    function renderAdminNoticeList() {
+      const el = document.getElementById('adminNoticeList'), cnt = document.getElementById('noticeCountLabel');
+      if (cnt) cnt.textContent = adminNotices.length;
+      if (!el) return;
+      if (!adminNotices.length) { el.innerHTML = '<div style="text-align:center; color:#888; padding:18px; background:#fff; border-radius:10px;">কোনো notice publish করা নেই।</div>'; return; }
+      el.innerHTML = adminNotices.map(function (n, i) {
+        const k = escapeHtml(n.key);
+        return '<div class="notice-admin-item">' + (i === 0 ? '<span class="notice-live-pill">NEWEST</span>' : '') +
+          '<div class="notice-admin-text">' + escapeHtml(n.text) + '</div>' +
+          '<div class="notice-admin-meta">' + escapeHtml(noticeTimeText(n.ts)) + (n.editedAt ? ' &middot; edited ' + escapeHtml(noticeTimeText(n.editedAt)) : '') + '</div>' +
+          '<div class="notice-admin-actions"><button type="button" onclick="editSiteNotice(\'' + k + '\')"><i class="fa-solid fa-pen"></i> Edit</button>' +
+          '<button type="button" class="del" onclick="deleteSiteNotice(\'' + k + '\')"><i class="fa-solid fa-trash"></i> Delete</button></div></div>';
+      }).join('');
+    }
+    function openAdminNoticeTab() {
+      goToAdminTab('noticeTab');
+      const p = document.getElementById('adminPanel');
+      if (p && p.scrollIntoView) p.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    function updateAdminNoticeCount() {
+      const ta = document.getElementById('adminNoticeInput'), c = document.getElementById('adminNoticeCount');
+      if (ta && c) c.textContent = ta.value.length;
+    }
+    function cancelNoticeEdit() {
+      document.getElementById('noticeEditKey').value = '';
+      const ta = document.getElementById('adminNoticeInput'); ta.value = ''; updateAdminNoticeCount();
+      document.getElementById('noticeFormTitle').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Publish New Notice';
+      document.getElementById('noticePublishBtn').innerHTML = '<i class="fa-solid fa-paper-plane"></i> Publish Notice';
+      document.getElementById('noticeCancelBtn').style.display = 'none';
+      document.getElementById('noticeRenotifyWrap').style.display = 'none';
+      document.getElementById('noticeRenotify').checked = false;
+    }
+    function editSiteNotice(key) {
+      const n = adminNotices.find(function (x) { return x.key === key; });
+      if (!n) return;
+      document.getElementById('noticeEditKey').value = key;
+      const ta = document.getElementById('adminNoticeInput'); ta.value = n.text; updateAdminNoticeCount();
+      document.getElementById('noticeFormTitle').innerHTML = '<i class="fa-solid fa-pen"></i> Edit Notice';
+      document.getElementById('noticePublishBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update Notice';
+      document.getElementById('noticeCancelBtn').style.display = 'block';
+      document.getElementById('noticeRenotifyWrap').style.display = 'block';
+      ta.scrollIntoView({ behavior: 'smooth', block: 'center' }); ta.focus();
+    }
+    function publishSiteNotice() {
+      const ta = document.getElementById('adminNoticeInput');
+      const text = ta.value.trim();
+      const editKey = document.getElementById('noticeEditKey').value;
+      if (!text) { alert('আগে notice লিখুন।'); return; }
+      if (!window.db) { alert('Database connect হয়নি, একটু পরে আবার চেষ্টা করুন।'); return; }
+      const now = Date.now();
+      if (editKey) {
+        const renotify = document.getElementById('noticeRenotify').checked;
+        if (renotify && !confirm('Notice update করে customer-দের আবার sound সহ জানানো হবে। ঠিক আছে?')) return;
+        const upd = { text: text, editedAt: now };
+        if (renotify) { upd.ts = now; upd.id = now; }
+        window.update(window.ref(window.db, noticePath(editKey)), upd)
+          .then(function () { alert('Notice update হয়েছে!'); cancelNoticeEdit(); })
+          .catch(function (e) { alert('Update করা যায়নি: ' + (e && e.message ? e.message : e)); });
+      } else {
+        if (!confirm('এই notice Website-এর সব customer-এর কাছে sound সহ চলে যাবে। Publish করবেন?')) return;
+        window.set(window.ref(window.db, noticePath(String(now))), { id: now, text: text, ts: now })
+          .then(function () { alert('Notice publish হয়েছে!'); cancelNoticeEdit(); })
+          .catch(function (e) { alert('Publish করা যায়নি: ' + (e && e.message ? e.message : e)); });
+      }
+    }
+    function deleteSiteNotice(key) {
+      if (!window.db) return;
+      if (!confirm('এই notice Website থেকে মুছে ফেলবেন?')) return;
+      window.set(window.ref(window.db, noticePath(key)), null)
+        .then(function () { if (document.getElementById('noticeEditKey').value === key) cancelNoticeEdit(); })
+        .catch(function (e) { alert('Delete করা যায়নি: ' + (e && e.message ? e.message : e)); });
     }
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -2587,7 +2815,7 @@
 
         const msgEl = document.getElementById('offerCustomerMessage');
         if (offerCustomerMessage) {
-          msgEl.innerHTML = `<div class="offer-message-track">${escapeHtml(offerCustomerMessage)}</div>`;
+          msgEl.innerHTML = `<div class="offer-message-track"><span class="offer-message-text">${escapeHtml(offerCustomerMessage)}</span></div>`;
           msgEl.style.display = 'block';
         } else {
           msgEl.innerHTML = '';
