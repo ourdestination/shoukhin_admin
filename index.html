@@ -40,6 +40,11 @@
 </head>
 
   <style>
+    /* Disable pull-to-refresh (swipe down) on mobile */
+    html, body { overscroll-behavior-y: none; overscroll-behavior: none; }
+    /* Popup open: background page must not scroll */
+    html.lp-modal-open, body.lp-modal-open { overflow: hidden !important; }
+    .modal, .modal-content { overscroll-behavior: contain; }
     :root {
       --primary: #e91e63;
       --secondary: #9c27b0;
@@ -253,7 +258,7 @@
     .country-btn:hover { border-color: var(--primary); }
     .country-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(233,30,99,.3); }
     .country-btn.active i { color: #fff; }
-    @media (max-width: 768px) { .country-bar { gap: 6px; } .country-btn { flex: 1 1 calc(33.333% - 6px); min-width: 0; justify-content: center; padding: 8px 4px; font-size: 0.8rem; gap: 5px; } .country-btn svg { width: 20px; height: 13px; } }
+    @media (max-width: 768px) { .country-bar { gap: 6px; } .country-btn { flex: 1 1 calc(33.333% - 6px); min-width: 0; justify-content: center; padding: 8px 4px; font-size: 0.8rem; gap: 5px; } .country-btn svg { width: 20px; height: 13px; } .country-btn[data-country="Bangladeshi"] { font-size: 0.72rem; gap: 3px; padding: 8px 2px; } .country-btn[data-country="Bangladeshi"] svg { width: 17px; height: 11px; } }
 
     .category-grid {
       display: grid;
@@ -748,8 +753,9 @@
       <button type="button" class="country-btn" data-country="Indian" onclick="selectCountry('Indian')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="6.67" fill="#ff9933"/><rect y="6.67" width="30" height="6.66" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.4" fill="none" stroke="#000080" stroke-width=".6"/></svg><span>Indian</span></button>
       <button type="button" class="country-btn" data-country="Thailand" onclick="selectCountry('Thailand')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#a51931"/><rect y="3.33" width="30" height="13.34" fill="#f4f5f8"/><rect y="6.67" width="30" height="6.66" fill="#2d2a4a"/></svg><span>Thailand</span></button>
       <button type="button" class="country-btn" data-country="Korean" onclick="selectCountry('Korean')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#fff"/><path d="M11.4 10A3.6 3.6 0 0 1 18.6 10Z" fill="#cd2e3a"/><path d="M18.6 10A3.6 3.6 0 0 1 11.4 10Z" fill="#0047a0"/><circle cx="13.2" cy="10" r="1.8" fill="#cd2e3a"/><circle cx="16.8" cy="10" r="1.8" fill="#0047a0"/><g transform="translate(6.2 4.6) rotate(-34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(23.8 4.6) rotate(34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(6.2 15.4) rotate(34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g><g transform="translate(23.8 15.4) rotate(-34)" fill="#000"><rect x="-1.8" y="-1.1" width="3.6" height=".6"/><rect x="-1.8" y="-.3" width="3.6" height=".6"/><rect x="-1.8" y=".5" width="3.6" height=".6"/></g></svg><span>Korean</span></button>
-      <button type="button" class="country-btn active" data-country="Bangladeshi" onclick="selectCountry('Bangladeshi')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#006a4e"/><circle cx="13" cy="10" r="5.6" fill="#f42a41"/></svg><span>Bangladeshi</span></button>
+      <button type="button" class="country-btn" data-country="Bangladeshi" onclick="selectCountry('Bangladeshi')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#006a4e"/><circle cx="13" cy="10" r="5.6" fill="#f42a41"/></svg><span>Bangladeshi</span></button>
       <button type="button" class="country-btn" data-country="Chinese" onclick="selectCountry('Chinese')"><svg viewBox="0 0 30 20" width="26" height="17" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.15);flex-shrink:0"><rect width="30" height="20" fill="#de2910"/><polygon points="5.00,2.00 5.68,4.07 7.85,4.07 6.09,5.36 6.76,7.43 5.00,6.15 3.24,7.43 3.91,5.36 2.15,4.07 4.32,4.07" fill="#ffde00"/><polygon points="9.14,2.51 9.62,1.97 9.25,1.34 9.91,1.63 10.39,1.08 10.33,1.80 11.00,2.09 10.29,2.25 10.22,2.97 9.85,2.35" fill="#ffde00"/><polygon points="11.01,4.14 11.66,3.82 11.56,3.10 12.07,3.63 12.72,3.30 12.38,3.95 12.88,4.47 12.17,4.34 11.83,4.99 11.73,4.26" fill="#ffde00"/><polygon points="11.04,6.73 11.77,6.70 11.96,6.00 12.21,6.68 12.94,6.66 12.37,7.10 12.62,7.79 12.01,7.38 11.44,7.83 11.64,7.13" fill="#ffde00"/><polygon points="9.22,8.38 9.90,8.63 10.35,8.06 10.32,8.79 11.00,9.05 10.30,9.24 10.26,9.96 9.87,9.36 9.16,9.55 9.62,8.98" fill="#ffde00"/></svg><span>Chinese</span></button>
+      <button type="button" class="country-btn active" data-country="All" onclick="selectCountry('All')"><i class="fa-solid fa-globe"></i><span>All Product</span></button>
     </div>
 
     <!-- Category Section -->
@@ -1787,7 +1793,7 @@
 
     // ===== Country sections (Bangladeshi / Indian / Thailand / Korean / Chinese) =====
     // Products without a saved country (all older products) are treated as Bangladeshi.
-    let selectedCountry = 'Bangladeshi';
+    let selectedCountry = 'All';
     const COUNTRY_FLAGS = {
       Bangladeshi: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="20" fill="#006a4e"/><circle cx="13" cy="10" r="5.6" fill="#f42a41"/></svg>',
       Indian: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="6.67" fill="#ff9933"/><rect y="6.67" width="30" height="6.66" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#138808"/><circle cx="15" cy="10" r="2.4" fill="none" stroke="#000080" stroke-width=".6"/></svg>',
@@ -1796,15 +1802,15 @@
       Chinese: '<svg viewBox="0 0 30 20" width="22" height="15" style="border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.2);display:block"><rect width="30" height="20" fill="#de2910"/><polygon points="5.00,2.00 5.68,4.07 7.85,4.07 6.09,5.36 6.76,7.43 5.00,6.15 3.24,7.43 3.91,5.36 2.15,4.07 4.32,4.07" fill="#ffde00"/><polygon points="9.14,2.51 9.62,1.97 9.25,1.34 9.91,1.63 10.39,1.08 10.33,1.80 11.00,2.09 10.29,2.25 10.22,2.97 9.85,2.35" fill="#ffde00"/><polygon points="11.01,4.14 11.66,3.82 11.56,3.10 12.07,3.63 12.72,3.30 12.38,3.95 12.88,4.47 12.17,4.34 11.83,4.99 11.73,4.26" fill="#ffde00"/><polygon points="11.04,6.73 11.77,6.70 11.96,6.00 12.21,6.68 12.94,6.66 12.37,7.10 12.62,7.79 12.01,7.38 11.44,7.83 11.64,7.13" fill="#ffde00"/><polygon points="9.22,8.38 9.90,8.63 10.35,8.06 10.32,8.79 11.00,9.05 10.30,9.24 10.26,9.96 9.87,9.36 9.16,9.55 9.62,8.98" fill="#ffde00"/></svg>'
     };
     function countryFlagHtml(country) { return COUNTRY_FLAGS[country] || COUNTRY_FLAGS.Bangladeshi; }
-    function categoryFlagBadge() { return '<span class="category-flag">' + countryFlagHtml(selectedCountry) + '</span>'; }
+    function categoryFlagBadge() { if (selectedCountry === 'All') return ''; return '<span class="category-flag">' + countryFlagHtml(selectedCountry) + '</span>'; }
     function getProductCountry(p) { return (p && p.country) ? p.country : 'Bangladeshi'; }
-    function countryProducts() { return products.filter(p => getProductCountry(p) === selectedCountry); }
+    function countryProducts() { return selectedCountry === 'All' ? products.slice() : products.filter(p => getProductCountry(p) === selectedCountry); }
     function selectCountry(country) {
       selectedCountry = country;
       selectedCategory = 'All';
       document.querySelectorAll('#countryBar .country-btn').forEach(b => b.classList.toggle('active', b.dataset.country === country));
       const t = document.getElementById('currentCategoryTitle');
-      if (t) t.innerText = country + ' Products';
+      if (t) t.innerText = (country === 'All' ? 'All' : country) + ' Products';
       // reset the search quietly (do NOT focus / jump to the search bar)
       const _si = document.getElementById('productSearchInput'); if (_si) _si.value = '';
       if (typeof productSearchQuery !== 'undefined') productSearchQuery = '';
@@ -5803,6 +5809,36 @@ const SHOUKHIN_VAPID_KEY = "BPd7dsoetnhWWoSnxB9YKT0184S5WjVYnVIS2J9QMUjZZC-X5vGY
   (function () {
     var g = document.getElementById('adminLoginGate');
     lpLiveLogo([document.getElementById('gateLogo')]);
+  })();
+</script>
+<script>
+  // Lock the background page while any popup/panel (notice, cart, etc.) is open
+  (function () {
+    function anyModalOpen() {
+      var list = document.querySelectorAll('.modal');
+      for (var i = 0; i < list.length; i++) {
+        var d = list[i].style.display;
+        if (d === 'flex' || d === 'block') return true;
+      }
+      return false;
+    }
+    function sync() {
+      var open = anyModalOpen();
+      document.documentElement.classList.toggle('lp-modal-open', open);
+      if (document.body) document.body.classList.toggle('lp-modal-open', open);
+    }
+    new MutationObserver(function (muts) {
+      for (var i = 0; i < muts.length; i++) {
+        var t = muts[i].target;
+        if (t && t.classList && t.classList.contains('modal')) { sync(); return; }
+      }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['style'], subtree: true });
+    // swiping on the dark backdrop must not move the page behind it
+    document.addEventListener('touchmove', function (e) {
+      var t = e.target;
+      if (t && t.classList && t.classList.contains('modal') && e.cancelable) e.preventDefault();
+    }, { passive: false });
+    sync();
   })();
 </script>
 </body>
